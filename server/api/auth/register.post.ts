@@ -4,6 +4,7 @@ import { sha256 } from 'ohash';
 const registerSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
+  turnstile: z.string()
 });
 
 export default eventHandler(async (event) => {
@@ -14,6 +15,12 @@ export default eventHandler(async (event) => {
   if (!result.success) throw createError('errorin');
 
   const validatedResult = result.data;
+
+  const verifyTurnstile = await verifyTurnstileToken(validatedResult.turnstile)
+
+  if (!verifyTurnstile) {
+    throw createError('turnstile not workin')
+  }
 
   const lowercasedEmail = validatedResult.email.toLowerCase();
   const salt = randomBytes(16).toString('hex');
