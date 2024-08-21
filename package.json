@@ -13,6 +13,9 @@
   "dependencies": {
     "@nuxthub/core": "^0.7.3",
     "@nuxtjs/turnstile": "^0.9.3",
+    "@vitejs/plugin-vue": "^5.1.2",
+    "@vue-email/components": "^0.0.19",
+    "@vue-email/render": "^0.0.9",
     "drizzle-orm": "^0.33.0",
     "nuxt": "^3.12.4",
     "nuxt-auth-utils": "^0.3.4",
@@ -22,6 +25,8 @@
   },
   "devDependencies": {
     "drizzle-kit": "^0.24.0",
+    "nodemailer": "^6.9.14",
+    "nuxt-nodemailer": "^1.1.2",
     "wrangler": "^3.72.0"
   }
 }

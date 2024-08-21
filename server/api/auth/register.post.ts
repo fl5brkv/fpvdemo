@@ -1,10 +1,11 @@
-import { randomBytes } from 'crypto';
-import { sha256 } from 'ohash';
+import {randomBytes} from 'crypto';
+import {sha256} from 'ohash';
+import {render} from '@vue-email/render';
+import AccountVerify from '@/components/Email/AccountVerify.vue';
 
 const registerSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().toLowerCase(),
   password: z.string().min(6),
-  turnstile: z.string()
 });
 
 export default eventHandler(async (event) => {
@@ -14,24 +15,47 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('errorin');
 
-  const validatedResult = result.data;
+  const {email, password} = result.data;
 
-  const verifyTurnstile = await verifyTurnstileToken(validatedResult.turnstile)
+  const salt = randomBytes(16).toString('hex');
+  const hashedPassword = sha256(password + salt);
 
-  if (!verifyTurnstile) {
-    throw createError('turnstile not workin')
+  const insertedUser = await useDrizzle()
+    .insert(tables.users)
+    .values({
+      email,
+      password: hashedPassword,
+      salt,
+    })
+    .onConflictDoNothing()
+    .returning({id: tables.users.id})
+    .get();
+
+  if (!insertedUser) {
+    throw createError('user nebol insertovany');
   }
 
-  const lowercasedEmail = validatedResult.email.toLowerCase();
-  const salt = randomBytes(16).toString('hex');
-  const hashedPassword = sha256(validatedResult.password + salt);
+  const unhashedToken = randomBytes(32).toString('hex');
 
-  const user = await useDrizzle().insert(tables.users).values({
-    email: lowercasedEmail,
-    password: hashedPassword,
-    salt: salt,
-    createdAt: new Date(),
+  const hashedToken = sha256(unhashedToken);
+
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+
+  await useDrizzle().insert(tables.verificationTokens).values({
+    userId: insertedUser.id,
+    hashedToken,
+    expiresAt,
   });
 
-  return { user };
+  const {sendMail} = useNodeMailer();
+
+  const html = await render(AccountVerify, {
+    verifyLink: `localhost:3000/verify-email/${encodeURIComponent(
+      unhashedToken
+    )}`,
+  });
+
+  await sendMail({subject: 'neviem', to: email, html});
+
+  return {insertedUser};
 });

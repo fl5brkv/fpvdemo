@@ -1,7 +1,7 @@
-import { sha256 } from 'ohash';
+import {sha256} from 'ohash';
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().toLowerCase(),
   password: z.string().min(6),
   // turnstile: z.string(),
 });
@@ -13,14 +13,12 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('somethin fucked up');
 
-  const validatedResult = result.data;
-
-  const lowercasedEmail = validatedResult.email.toLowerCase();
+  const {email, password} = result.data;
 
   const user = await useDrizzle()
     .select()
     .from(tables.users)
-    .where(eq(tables.users.email, lowercasedEmail))
+    .where(eq(tables.users.email, email))
     .get();
 
   if (!user) {
@@ -30,9 +28,7 @@ export default eventHandler(async (event) => {
   const validatedUser = await useDrizzle()
     .select()
     .from(tables.users)
-    .where(
-      eq(tables.users.password, sha256(validatedResult.password + user.salt))
-    )
+    .where(eq(tables.users.password, sha256(password + user.salt)))
     .get();
 
   if (!validatedUser) {
@@ -42,4 +38,6 @@ export default eventHandler(async (event) => {
   await setUserSession(event, {
     user: validatedUser.email,
   });
+
+  return 'Login succesfull';
 });
