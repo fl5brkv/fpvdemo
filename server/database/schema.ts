@@ -43,3 +43,29 @@ export const verificationTokensRelations = relations(
     }),
   })
 );
+
+export const recoveryTokens = sqliteTable('recoveryTokens', {
+  id: integer('id').primaryKey({autoIncrement: true}),
+  userId: integer('user_id')
+    .references(() => users.id, {onDelete: 'cascade'})
+    .notNull(),
+  hashedToken: text('hashed_token').unique().notNull(),
+  expiresAt: integer('expires_at', {mode: 'number'}).notNull(),
+  updatedAt: text('updated_at')
+    .default(sql`(current_timestamp)`)
+    .notNull(),
+  createdAt: text('created_at')
+    .default(sql`(current_timestamp)`)
+    .notNull(),
+});
+
+export const recoveryTokensRelations = relations(
+  recoveryTokens,
+  ({one}) => ({
+    user: one(users, {
+      fields: [recoveryTokens.userId],
+      references: [users.id],
+    }),
+  })
+);
+

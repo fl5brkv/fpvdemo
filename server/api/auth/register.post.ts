@@ -1,7 +1,7 @@
 import {randomBytes} from 'crypto';
 import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
-import AccountVerify from '@/components/Email/AccountVerify.vue';
+import EmailVerification from '@/components/Email/EmailVerification.vue';
 
 const registerSchema = z.object({
   email: z.string().email().toLowerCase(),
@@ -39,7 +39,8 @@ export default eventHandler(async (event) => {
 
   const hashedToken = sha256(unhashedToken);
 
-  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  // 1 hour
+  const expiresAt = Date.now() + 60 * 60 * 1000;
 
   await useDrizzle().insert(tables.verificationTokens).values({
     userId: insertedUser.id,
@@ -49,7 +50,7 @@ export default eventHandler(async (event) => {
 
   const {sendMail} = useNodeMailer();
 
-  const html = await render(AccountVerify, {
+  const html = await render(EmailVerification, {
     verifyLink: `localhost:3000/verify-email/${encodeURIComponent(
       unhashedToken
     )}`,

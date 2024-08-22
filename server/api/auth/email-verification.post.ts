@@ -57,7 +57,7 @@ export default eventHandler(async (event) => {
 
   await useDrizzle()
     .delete(tables.verificationTokens)
-    .where(eq(tables.verificationTokens.id, verificationRecord.id));
+    .where(eq(tables.verificationTokens.userId, verificationRecord.user.id));
 
   return {message: 'User successfully verified'};
 });
