@@ -25,10 +25,12 @@ export default eventHandler(async (event) => {
     throw createError('Nesprávny email alebo heslo');
   }
 
+  const hashedPassword = sha256(password + user.salt)
+
   const validatedUser = await useDrizzle()
     .select()
     .from(tables.users)
-    .where(eq(tables.users.password, sha256(password + user.salt)))
+    .where(eq(tables.users.password, hashedPassword))
     .get();
 
   if (!validatedUser) {
