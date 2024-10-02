@@ -14,7 +14,7 @@ export const users = sqliteTable('users', {
   verifiedEmail: integer('verified_email', {mode: 'boolean'})
     .default(false)
     .notNull(),
-  passwordHash: text('password_hash').notNull(),
+  hashedPassword: text('hashed_password').notNull(),
   passwordSalt: text('password_salt').notNull(),
   updatedAt: text('updated_at')
     .default(sql`(current_timestamp)`)

@@ -16,25 +16,25 @@ export default eventHandler(async (event) => {
 
   const {email} = result.data;
 
-  const returnedUser = await useDrizzle()
+  const selectedUser = await useDrizzle()
     .select()
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!returnedUser) {
+  if (!selectedUser) {
     throw createError('Mail nebol najdeny');
   }
 
-  const unhashedToken = randomBytes(32).toString('hex');
+  const randomToken = randomBytes(32).toString('hex');
 
-  const hashedToken = sha256(unhashedToken);
+  const hashedToken = sha256(randomToken);
 
   // 15 minutes
   const expiresAt = Date.now() + 15 * 60 * 1000;
 
   await useDrizzle().insert(tables.recoveryTokens).values({
-    userId: returnedUser.id,
+    userId: selectedUser.userId,
     hashedToken,
     expiresAt,
   });
@@ -43,7 +43,7 @@ export default eventHandler(async (event) => {
 
   const html = await render(PasswordRecovery, {
     recoveryLink: `localhost:3000/password-recovery/${encodeURIComponent(
-      unhashedToken
+      randomToken
     )}`,
   });
 

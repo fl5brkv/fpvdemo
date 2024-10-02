@@ -5,7 +5,7 @@ import EmailVerification from '@/components/Email/EmailVerification.vue';
 
 const registerSchema = z.object({
   email: z.string().email().toLowerCase(),
-  password: z.string().min(6),
+  plaintextPassword: z.string().min(6),
 });
 
 export default eventHandler(async (event) => {
@@ -15,29 +15,29 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('errorin');
 
-  const {email, password} = result.data;
+  const {email, plaintextPassword} = result.data;
 
-  const salt = randomBytes(16).toString('hex');
-  const hashedPassword = sha256(password + salt);
+  const passwordSalt = randomBytes(16).toString('hex');
+  const hashedPassword = sha256(plaintextPassword + passwordSalt);
 
   const insertedUser = await useDrizzle()
     .insert(tables.users)
     .values({
       email,
-      password: hashedPassword,
-      salt,
+      hashedPassword,
+      passwordSalt,
     })
     .onConflictDoNothing()
-    .returning({id: tables.users.id})
+    .returning({id: tables.users.userId})
     .get();
 
   if (!insertedUser) {
     throw createError('user nebol insertovany');
   }
 
-  const unhashedToken = randomBytes(32).toString('hex');
+  const randomToken = randomBytes(32).toString('hex');
 
-  const hashedToken = sha256(unhashedToken);
+  const hashedToken = sha256(randomToken);
 
   // 1 hour
   const expiresAt = Date.now() + 60 * 60 * 1000;
@@ -52,7 +52,7 @@ export default eventHandler(async (event) => {
 
   const html = await render(EmailVerification, {
     verifyLink: `localhost:3000/email-verification/${encodeURIComponent(
-      unhashedToken
+      randomToken
     )}`,
   });
 

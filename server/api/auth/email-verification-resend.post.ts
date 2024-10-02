@@ -3,37 +3,37 @@ import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 
-const verifyEmailResendSchema = z.object({
+const emailVerificationResendSchema = z.object({
   email: z.string().email().toLowerCase(),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    verifyEmailResendSchema.safeParse(body)
+    emailVerificationResendSchema.safeParse(body)
   );
 
   if (!result.success) throw createError('somethin fucked up');
 
   const {email} = result.data;
 
-  const returnedUser = await useDrizzle()
+  const selectedUser = await useDrizzle()
     .select()
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!returnedUser) {
+  if (!selectedUser) {
     throw createError('Mail nebol najdeny');
   }
 
-  const unhashedToken = randomBytes(32).toString('hex');
+  const randomToken = randomBytes(32).toString('hex');
 
-  const hashedToken = sha256(unhashedToken);
+  const hashedToken = sha256(randomToken);
 
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
 
   await useDrizzle().insert(tables.verificationTokens).values({
-    userId: returnedUser.id,
+    userId: selectedUser.userId,
     hashedToken,
     expiresAt,
   });
@@ -42,7 +42,7 @@ export default eventHandler(async (event) => {
 
   const html = await render(EmailVerification, {
     verifyLink: `localhost:3000/email-verification/${encodeURIComponent(
-      unhashedToken
+      randomToken
     )}`,
   });
 

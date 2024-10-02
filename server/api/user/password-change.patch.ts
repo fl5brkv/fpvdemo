@@ -1,10 +1,10 @@
 import {randomBytes} from 'crypto';
 import {sha256} from 'ohash';
-import {users} from '~/server/database/schema';
+import {User} from '~/server/utils/drizzle';
 
 const passwordChangeSchema = z.object({
-  password: z.string().min(6),
-  newPassword: z.string().min(6),
+  plaintextPassword: z.string().min(6),
+  newPlaintextPassword: z.string().min(6),
 });
 
 export default eventHandler(async (event) => {
@@ -14,39 +14,29 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('errorin');
 
-  const {password, newPassword} = result.data;
-
-  const salt = randomBytes(16).toString('hex');
-
-  const newHashedPassword = sha256(newPassword + salt);
+  const {plaintextPassword, newPlaintextPassword} = result.data;
 
   const {user} = (await requireUserSession(event)) as {user: User};
 
-  const loggedInUser = await useDrizzle()
-    .select()
-    .from(tables.users)
-    .where(eq(tables.users.id, user.id))
-    .get();
+  const hashedPassword = sha256(plaintextPassword + user.passwordSalt);
 
-  if (!loggedInUser) {
-    throw createError('User nebol najdeny');
-  }
+  const passwordSalt = randomBytes(16).toString('hex');
 
-  const hashedPassword = sha256(password + loggedInUser.salt);
+  const newHashedPassword = sha256(newPlaintextPassword + passwordSalt);
 
   const updatedUser = await useDrizzle()
     .update(tables.users)
     .set({
-      password: newHashedPassword,
-      salt,
+      hashedPassword: newHashedPassword,
+      passwordSalt,
     })
     .where(
       and(
-        eq(tables.users.id, user.id),
-        eq(tables.users.password, hashedPassword)
+        eq(tables.users.userId, user.userId),
+        eq(tables.users.hashedPassword, hashedPassword)
       )
     )
-    .returning({id: users.id})
+    .returning()
     .get();
 
   if (!updatedUser) {

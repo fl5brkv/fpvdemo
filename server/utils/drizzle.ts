@@ -8,4 +8,6 @@ export function useDrizzle() {
   return drizzle(hubDatabase(), {schema});
 }
 
+export { eq, and, gt } from 'drizzle-orm'
+
 export type User = typeof schema.users.$inferSelect;

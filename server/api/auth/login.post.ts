@@ -2,7 +2,7 @@ import {sha256} from 'ohash';
 
 const loginSchema = z.object({
   email: z.string().email().toLowerCase(),
-  password: z.string().min(6),
+  plaintextPassword: z.string().min(6),
   // turnstile: z.string(),
 });
 
@@ -13,24 +13,24 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('somethin fucked up');
 
-  const {email, password} = result.data;
+  const {email, plaintextPassword} = result.data;
 
-  const user = await useDrizzle()
+  const selectedUser = await useDrizzle()
     .select()
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!user) {
+  if (!selectedUser) {
     throw createError('Nesprávny email alebo heslo');
   }
 
-  const hashedPassword = sha256(password + user.salt)
+  const hashedPassword = sha256(plaintextPassword + selectedUser.passwordSalt);
 
   const validatedUser = await useDrizzle()
     .select()
     .from(tables.users)
-    .where(eq(tables.users.password, hashedPassword))
+    .where(eq(tables.users.hashedPassword, hashedPassword))
     .get();
 
   if (!validatedUser) {
