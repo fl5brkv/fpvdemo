@@ -35,6 +35,12 @@ export default eventHandler(async (event) => {
 
   if (!validatedUser) {
     throw createError('Nesprávny email alebo heslo');
+  } else if (!validatedUser.verifiedEmail) {
+    throw createError({
+      message: 'The email is not verified',
+      statusCode: 403,
+      statusMessage: 'Forbidden',
+    });
   }
 
   await setUserSession(event, {

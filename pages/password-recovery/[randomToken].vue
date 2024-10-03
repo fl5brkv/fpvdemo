@@ -9,7 +9,7 @@ const unhashedToken = route.params.unhashedToken;
 const message = ref('');
 const password = ref('')
 
-// onMounted(async function submit() {
+onMounted(async function submit() {
   try {
     const response = await $fetch('/api/auth/password-recovery', {
       method: 'post',
@@ -19,5 +19,5 @@ const password = ref('')
   } catch (error) {
     message.value = error;
   }
-// });
+});
 </script>
