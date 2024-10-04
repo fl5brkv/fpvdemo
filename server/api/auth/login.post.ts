@@ -11,7 +11,12 @@ export default eventHandler(async (event) => {
     loginSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('somethin fucked up');
+  if (!result.success) {
+    throw createError({
+      statusCode: 400,
+      message: 'Invalid input data',
+    });
+  }
 
   const {email, plaintextPassword} = result.data;
 
@@ -22,9 +27,11 @@ export default eventHandler(async (event) => {
     .get();
 
   if (!selectedUser) {
-    throw createError('Nesprávny email alebo heslo');
+    throw createError({
+      statusCode: 401,
+      message: 'Incorrect email or password',
+    });
   }
-
   const hashedPassword = sha256(plaintextPassword + selectedUser.passwordSalt);
 
   const validatedUser = await useDrizzle()
@@ -34,15 +41,18 @@ export default eventHandler(async (event) => {
     .get();
 
   if (!validatedUser) {
-    throw createError('Nesprávny email alebo heslo');
-  } else if (!validatedUser.verifiedEmail) {
     throw createError({
-      message: 'The email is not verified',
-      statusCode: 403,
-      statusMessage: 'Forbidden',
+      statusCode: 401,
+      message: 'Incorrect email or password',
     });
   }
 
+  if (!validatedUser.verifiedEmail) {
+    throw createError({
+      statusCode: 403,
+      message: 'Email not verified',
+    });
+  }
   await setUserSession(event, {
     user: validatedUser.email,
   });
