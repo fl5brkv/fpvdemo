@@ -99,7 +99,7 @@ CREATE TABLE `users` (
 	`user_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`email` text NOT NULL,
 	`verified_email` integer DEFAULT false NOT NULL,
-	`password_hash` text NOT NULL,
+	`hashed_password` text NOT NULL,
 	`password_salt` text NOT NULL,
 	`updated_at` text DEFAULT (current_timestamp) NOT NULL,
 	`created_at` text DEFAULT (current_timestamp) NOT NULL

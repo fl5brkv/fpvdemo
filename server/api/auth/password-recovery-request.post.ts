@@ -12,7 +12,8 @@ export default eventHandler(async (event) => {
     passwordRecoveryRequestSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('somethin fucked up');
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {email} = result.data;
 

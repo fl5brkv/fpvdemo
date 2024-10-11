@@ -34,6 +34,11 @@ export default defineNuxtConfig({
       plugins: [vue()],
     },
   },
+  vite: {
+    optimizeDeps: {
+      exclude: ['vee-validate'],
+    },
+  },
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: true },
+  devtools: {enabled: true},
 });

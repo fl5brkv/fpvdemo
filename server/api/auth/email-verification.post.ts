@@ -33,11 +33,11 @@ export default eventHandler(async (event) => {
       )
     );
 
-  if (!verificationTokenJoin) {
-    throw createError('Invalid or expired token');
-  } else if (verificationTokenJoin.userVerifiedEmail) {
-    return {message: 'User already verified'};
-  }
+  if (!verificationTokenJoin)
+    throw createError('Invalid or expired verification token.');
+
+  if (verificationTokenJoin.userVerifiedEmail)
+    return 'User has already verified their email.';
 
   // OPTION 1
 

@@ -12,7 +12,8 @@ export default eventHandler(async (event) => {
     emailVerificationResendSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('somethin fucked up');
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {email} = result.data;
 
@@ -22,9 +23,8 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser) {
-    throw createError('Mail nebol najdeny');
-  }
+  if (!selectedUser)
+    throw createError({statusMessage: 'No user found with the provided email'});
 
   const randomToken = randomBytes(32).toString('hex');
 
@@ -48,5 +48,5 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  return {message: 'succesfull broooooo'};
+  return 'succesfull broooooo';
 });

@@ -30,5 +30,4 @@ export const usersRelations = relations(users, ({one, many}) => ({
   profile: one(profiles),
   flightSessions: many(flightSessions),
   items: many(items),
-  //   tags: many(tags),
 }));

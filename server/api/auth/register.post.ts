@@ -13,7 +13,8 @@ export default eventHandler(async (event) => {
     registerSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('errorin');
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {email, plaintextPassword} = result.data;
 
@@ -31,9 +32,10 @@ export default eventHandler(async (event) => {
     .returning({id: tables.users.userId})
     .get();
 
-  if (!insertedUser) {
-    throw createError('user nebol insertovany');
-  }
+  if (!insertedUser)
+    throw createError({
+      statusMessage: 'The user already exists or could not be inserted.',
+    });
 
   const randomToken = randomBytes(32).toString('hex');
 

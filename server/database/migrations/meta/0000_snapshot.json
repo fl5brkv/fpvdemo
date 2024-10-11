@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "40ec01f2-79ea-46e4-870c-9037f4424963",
+  "id": "5fc8e4b7-c3e1-4c9c-aaf5-21d90112e099",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "batteries": {
@@ -711,8 +711,8 @@
           "autoincrement": false,
           "default": false
         },
-        "password_hash": {
-          "name": "password_hash",
+        "hashed_password": {
+          "name": "hashed_password",
           "type": "text",
           "primaryKey": false,
           "notNull": true,

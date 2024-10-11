@@ -1,20 +1,23 @@
-<template>{{ randomToken}} {{ message }}</template>
+<template>{{ randomToken }}</template>
 
 <script setup lang="ts">
 const route = useRoute();
 const randomToken = route.params.randomToken;
 
-const message = ref('');
+const response = ref<string | null>(null);
+const error = ref<string | null>(null);
 
 onMounted(async () => {
   try {
-    const response = await $fetch('/api/auth/email-verification', {
+    const res = await $fetch('/api/auth/email-verification', {
       method: 'POST',
       body: {randomToken},
     });
-    console.log(response);
-  } catch (error) {
-    console.log(error);
+    navigateTo({path: '/login'});
+  } catch (err: any) {
+    error.value = err
+      ? err.statusMessage
+      : 'Oops! Something went wrong. Please try again later.';
   }
 });
 </script>

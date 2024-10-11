@@ -3,7 +3,6 @@ import {sha256} from 'ohash';
 const loginSchema = z.object({
   email: z.string().email().toLowerCase(),
   plaintextPassword: z.string().min(6),
-  // turnstile: z.string(),
 });
 
 export default eventHandler(async (event) => {
@@ -11,12 +10,8 @@ export default eventHandler(async (event) => {
     loginSchema.safeParse(body)
   );
 
-  if (!result.success) {
-    throw createError({
-      statusCode: 400,
-      message: 'Invalid input data',
-    });
-  }
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {email, plaintextPassword} = result.data;
 
