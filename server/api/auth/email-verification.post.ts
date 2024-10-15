@@ -9,7 +9,10 @@ export default eventHandler(async (event) => {
     emailVerificationSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('Token is missing');
+  if (!result.success)
+    throw createError({
+      statusMessage: 'Token is missing',
+    });
 
   const {randomToken} = result.data;
 
@@ -19,12 +22,12 @@ export default eventHandler(async (event) => {
     .select({
       verificationTokenId: tables.verificationTokens.verificationTokenId,
       verificationTokenUserId: tables.verificationTokens.userId,
-      userVerifiedEmail: tables.users.verifiedEmail,
+      // userVerifiedEmail: tables.users.verifiedEmail,
     })
     .from(tables.verificationTokens)
     .innerJoin(
       tables.users,
-      eq(tables.users.userId, tables.verificationTokens.verificationTokenId)
+      eq(tables.users.userId, tables.verificationTokens.userId)
     )
     .where(
       and(
@@ -34,10 +37,15 @@ export default eventHandler(async (event) => {
     );
 
   if (!verificationTokenJoin)
-    throw createError('Invalid or expired verification token.');
+    throw createError({
+      statusMessage: 'Invalid or expired verification token.',
+    });
 
-  if (verificationTokenJoin.userVerifiedEmail)
-    return 'User has already verified their email.';
+  // this is maybe unnecessary
+  // if (verificationTokenJoin.userVerifiedEmail)
+  //   throw createError({
+  //     statusMessage: 'User has already verified their email.',
+  //   });
 
   // OPTION 1
 
@@ -61,35 +69,21 @@ export default eventHandler(async (event) => {
 
   // OPTION 2
 
-  // await useDrizzle()
-  //   .update(tables.users)
-  //   .set({verifiedEmail: true})
-  //   .where(eq(tables.users.userId, verificationTokenJoin.verificationTokenUserId));
+  await useDrizzle()
+    .update(tables.users)
+    .set({verifiedEmail: true})
+    .where(
+      eq(tables.users.userId, verificationTokenJoin.verificationTokenUserId)
+    );
 
-  // await useDrizzle()
-  //   .delete(tables.verificationTokens)
-  //   .where(eq(
-  //        tables.verificationTokens.verificationTokenId,
-  //       verificationTokenJoin.verificationTokenId
-  //      ));
+  await useDrizzle()
+    .delete(tables.verificationTokens)
+    .where(
+      eq(
+        tables.verificationTokens.verificationTokenId,
+        verificationTokenJoin.verificationTokenId
+      )
+    );
 
   return {message: 'User successfully verified'};
 });
-
-// OLD QUERY
-
-// const verificationRecord =
-//   await useDrizzle().query.verificationTokens.findFirst({
-//     where: and(
-//       eq(tables.verificationTokens.hashedToken, hashedToken),
-//       gt(tables.verificationTokens.expiresAt, Date.now())
-//     ),
-//     with: {
-//       user: {
-//         columns: {
-//           id: true,
-//           verifiedEmail: true,
-//         },
-//       },
-//     },
-//   });

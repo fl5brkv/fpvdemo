@@ -21,12 +21,11 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser) {
+  if (!selectedUser)
     throw createError({
-      statusCode: 401,
-      message: 'Incorrect email or password',
+      statusMessage: 'Incorrect email or password',
     });
-  }
+
   const hashedPassword = sha256(plaintextPassword + selectedUser.passwordSalt);
 
   const validatedUser = await useDrizzle()
@@ -35,19 +34,16 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.hashedPassword, hashedPassword))
     .get();
 
-  if (!validatedUser) {
+  if (!validatedUser)
     throw createError({
-      statusCode: 401,
-      message: 'Incorrect email or password',
+      statusMessage: 'Incorrect email or password',
     });
-  }
 
-  if (!validatedUser.verifiedEmail) {
+  if (!validatedUser.verifiedEmail)
     throw createError({
-      statusCode: 403,
-      message: 'Email not verified',
+      statusMessage: 'Your email is not verified. Please verify your email.',
     });
-  }
+
   await setUserSession(event, {
     user: validatedUser.email,
   });

@@ -23,10 +23,9 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser) {
-    throw createError('Mail nebol najdeny');
-  }
-
+  if (!selectedUser) 
+    throw createError({statusMessage: 'User not found'});
+  
   const randomToken = randomBytes(32).toString('hex');
 
   const hashedToken = sha256(randomToken);

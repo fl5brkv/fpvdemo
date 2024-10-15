@@ -1,13 +1,8 @@
+<!-- here will be form with 1 input for email  -->
 <template>
   <form @submit="onSubmit">
     <input type="email" v-model="email" v-bind="emailAttrs" />
     <div>{{ errors.email }}</div>
-
-    <input
-      type="password"
-      v-model="plaintextPassword"
-      v-bind="plaintextPasswordAttrs" />
-    <div>{{ errors.plaintextPassword }}</div>
 
     <button :disabled="isSubmitting || submitCount > 5">
       <span v-if="isSubmitting"> 🕒 Submitting... </span>
@@ -24,40 +19,29 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 
-const {
-  handleSubmit,
-  errors,
-  defineField,
-  isSubmitting,
-  resetForm,
-  submitCount,
-} = useForm({
+const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   validationSchema: toTypedSchema(
     z.object({
       email: z.string().min(1).email(),
-      plaintextPassword: z.string().min(6),
     })
   ),
 });
 
-const [email, emailAttrs] = defineField('email');
-const [plaintextPassword, plaintextPasswordAttrs] =
-  defineField('plaintextPassword');
-
 const error = ref<string | null>(null);
+
+const [email, emailAttrs] = defineField('email');
 
 const onSubmit = handleSubmit(async (values) => {
   try {
-    await $fetch('/api/auth/register', {
+    await $fetch('/api/auth/password-recovery-request', {
       method: 'POST',
       body: values,
     });
-    navigateTo({path: '/email-verification'});
+    navigateTo({path: '/password-recovery'});
   } catch (err: any) {
     error.value = err
       ? err.statusMessage
       : 'Oops! Something went wrong. Please try again later.';
-    resetForm();
   }
 });
 </script>

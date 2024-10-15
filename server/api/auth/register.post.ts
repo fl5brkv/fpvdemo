@@ -34,7 +34,7 @@ export default eventHandler(async (event) => {
 
   if (!insertedUser)
     throw createError({
-      statusMessage: 'The user already exists or could not be inserted.',
+      statusMessage: 'The email is invalid or already taken',
     });
 
   const randomToken = randomBytes(32).toString('hex');

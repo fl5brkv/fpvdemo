@@ -26,6 +26,9 @@ export default eventHandler(async (event) => {
   if (!selectedUser)
     throw createError({statusMessage: 'No user found with the provided email'});
 
+  if (selectedUser.verifiedEmail)
+    throw createError({statusMessage: 'Email already verified'});
+
   const randomToken = randomBytes(32).toString('hex');
 
   const hashedToken = sha256(randomToken);

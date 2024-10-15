@@ -1,4 +1,10 @@
-<template>{{ randomToken }}</template>
+<template>
+  {{ randomToken }}
+  <div v-if="error">
+    <NuxtLink to="/">go home</NuxtLink>
+    <span>{{ error }}</span>
+  </div>
+</template>
 
 <script setup lang="ts">
 const route = useRoute();

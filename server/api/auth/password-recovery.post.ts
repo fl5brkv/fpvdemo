@@ -11,7 +11,10 @@ export default eventHandler(async (event) => {
     passwordRecoverySchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('Token is missing');
+  if (!result.success)
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+    });
 
   const {randomToken, plaintextPassword} = result.data;
 
