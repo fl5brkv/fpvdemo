@@ -10,14 +10,13 @@ export const flightSessions = sqliteTable('flight_sessions', {
   userId: integer('user_id')
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
+  publicFlightSessionId: text('public_flight_session_id').unique().notNull(),
   datetimeStart: text('datetime_start'),
   datetimeEnd: text('datetime_end'),
   location: text('location'),
   lat: integer('lat'),
   lng: integer('lng'),
-  numberOfFlights: integer('number_of_flights', {mode: 'number'})
-    .default(1)
-    .notNull(),
+  numberOfFlights: integer('number_of_flights', {mode: 'number'}),
   timeInAir: integer('time_in_air', {mode: 'number'}),
   purpose: text('purpose', {
     enum: [
@@ -36,11 +35,12 @@ export const flightSessions = sqliteTable('flight_sessions', {
     ],
   }),
   additionalInfo: text('additional_info'),
-  updatedAt: text('updated_at')
-    .default(sql`(current_timestamp)`)
+  updatedAt: integer('updated_at', {mode: 'number'})
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => sql`(unixepoch())`)
     .notNull(),
-  createdAt: text('created_at')
-    .default(sql`(current_timestamp)`)
+  createdAt: integer('created_at', {mode: 'number'})
+    .default(sql`(unixepoch())`)
     .notNull(),
 });
 

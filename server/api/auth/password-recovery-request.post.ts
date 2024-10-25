@@ -3,13 +3,13 @@ import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import PasswordRecovery from '@/components/Email/PasswordRecovery.vue';
 
-const passwordRecoveryRequestSchema = z.object({
+const validationSchema = z.object({
   email: z.string().email().toLowerCase(),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    passwordRecoveryRequestSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -23,9 +23,8 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser) 
-    throw createError({statusMessage: 'User not found'});
-  
+  if (!selectedUser) throw createError({statusMessage: 'User not found'});
+
   const randomToken = randomBytes(32).toString('hex');
 
   const hashedToken = sha256(randomToken);

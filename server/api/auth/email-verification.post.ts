@@ -1,12 +1,12 @@
 import {sha256} from 'ohash';
 
-const emailVerificationSchema = z.object({
+const validationSchema = z.object({
   randomToken: z.string(),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    emailVerificationSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -22,7 +22,6 @@ export default eventHandler(async (event) => {
     .select({
       verificationTokenId: tables.verificationTokens.verificationTokenId,
       verificationTokenUserId: tables.verificationTokens.userId,
-      // userVerifiedEmail: tables.users.verifiedEmail,
     })
     .from(tables.verificationTokens)
     .innerJoin(
@@ -85,5 +84,5 @@ export default eventHandler(async (event) => {
       )
     );
 
-  return {message: 'User successfully verified'};
+  return 'User successfully verified'
 });

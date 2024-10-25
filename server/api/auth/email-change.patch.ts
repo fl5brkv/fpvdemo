@@ -4,19 +4,18 @@ import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 import {User} from '~/server/utils/drizzle';
 
-const emailChangeSchema = z.object({
-  email: z.string().email().toLowerCase(),
+const validationSchema = z.object({
   newEmail: z.string().email().toLowerCase(),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    emailChangeSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success) throw createError('errorin');
 
-  const {email, newEmail} = result.data;
+  const {newEmail} = result.data;
 
   const {user} = (await requireUserSession(event)) as {user: User};
 
@@ -55,7 +54,9 @@ export default eventHandler(async (event) => {
 
   const {sendMail} = useNodeMailer();
 
-  await sendMail({subject: 'neviem', to: email, html});
+  await sendMail({subject: 'neviem', to: newEmail, html});
 
-  return {updatedUser};
+  await clearUserSession(event);
+
+  return 'succesfull';
 });

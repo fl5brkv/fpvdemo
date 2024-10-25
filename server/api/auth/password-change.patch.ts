@@ -2,14 +2,14 @@ import {randomBytes} from 'crypto';
 import {sha256} from 'ohash';
 import {User} from '~/server/utils/drizzle';
 
-const passwordChangeSchema = z.object({
+const validationSchema = z.object({
   plaintextPassword: z.string().min(6),
   newPlaintextPassword: z.string().min(6),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    passwordChangeSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success) throw createError('errorin');

@@ -3,13 +3,13 @@ import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 
-const emailVerificationResendSchema = z.object({
+const validationSchema = z.object({
   email: z.string().email().toLowerCase(),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    emailVerificationResendSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success)

@@ -25,7 +25,9 @@
     <span v-else>{{ error }}</span>
   </span>
 
-  <div><NuxtLink to='/password-recovery/request'>zabudol som heslo</NuxtLink></div>
+  <div>
+    <NuxtLink to="/password-recovery/request">zabudol som heslo</NuxtLink>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -33,17 +35,11 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {z} from 'zod';
 
-const {
-  handleSubmit,
-  errors,
-  defineField,
-  isSubmitting,
-  submitCount,
-} = useForm({
+const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   validationSchema: toTypedSchema(
     z.object({
-      email: z.string().min(1).email(),
-      plaintextPassword: z.string().min(6),
+      email: z.string().min(1).email().default('mail@mail.mail'),
+      plaintextPassword: z.string().min(6).default('heslo123'),
     })
   ),
 });
@@ -60,7 +56,7 @@ const onSubmit = handleSubmit(async (values) => {
       method: 'POST',
       body: values,
     });
-    navigateTo({path: '/'});
+    navigateTo('/', {external: true});
   } catch (err: any) {
     error.value = err
       ? err.statusMessage

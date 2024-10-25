@@ -2,9 +2,6 @@ import {relations, sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {itemsToFlightSessions} from './itemsToFlightSessions';
-import {batteries} from './batteries';
-import {drones} from './drones';
-import {droneComponents} from './droneComponents';
 
 export const items = sqliteTable('items', {
   itemId: integer('item_id', {mode: 'number'}).primaryKey({
@@ -16,7 +13,6 @@ export const items = sqliteTable('items', {
   itemName: text('item_name').notNull(),
   category: text('category', {
     enum: [
-      // general items
       'goggles',
       'radio (TX)',
       'goggles', // contains video receiver (VRX)
@@ -30,13 +26,8 @@ export const items = sqliteTable('items', {
       'LiPo bag',
       'toolkit',
       'game',
-      'other',
-      // drones table
-      'fpv drone',
-      'other drone',
-      // batteries table
+      'drone',
       'battery',
-      // drone components table
       'frame',
       'motors',
       'props',
@@ -46,7 +37,7 @@ export const items = sqliteTable('items', {
       'GPS',
       'receiver (RX)',
       'transmitter (VTX)',
-      'other component',
+      'other',
     ],
   }).notNull(),
   status: text('status', {
@@ -57,11 +48,12 @@ export const items = sqliteTable('items', {
   salePrice: integer('sale_price'),
   saleDate: text('sale_date'),
   additionalInfo: text('additional_info'),
-  updatedAt: text('updated_at')
-    .default(sql`(current_timestamp)`)
+  updatedAt: integer('updated_at', {mode: 'number'})
+    .default(sql`(unixepoch())`)
+    .$onUpdate(() => sql`(unixepoch())`)
     .notNull(),
-  createdAt: text('created_at')
-    .default(sql`(current_timestamp)`)
+  createdAt: integer('created_at', {mode: 'number'})
+    .default(sql`(unixepoch())`)
     .notNull(),
 });
 
@@ -71,8 +63,4 @@ export const itemsRelations = relations(items, ({one, many}) => ({
     references: [users.userId],
   }),
   itemsToFlightSessions: many(itemsToFlightSessions),
-  batteries: many(batteries),
-  drones: many(drones),
-  droneComponents: many(droneComponents),
-  // droneComponents: many(droneComponents),
 }));

@@ -3,14 +3,14 @@ import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 
-const registerSchema = z.object({
+const validationSchema = z.object({
   email: z.string().email().toLowerCase(),
   plaintextPassword: z.string().min(6),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    registerSchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -21,7 +21,7 @@ export default eventHandler(async (event) => {
   const passwordSalt = randomBytes(16).toString('hex');
   const hashedPassword = sha256(plaintextPassword + passwordSalt);
 
-  const insertedUser = await useDrizzle()
+  const inserted = await useDrizzle()
     .insert(tables.users)
     .values({
       email,
@@ -32,7 +32,7 @@ export default eventHandler(async (event) => {
     .returning({id: tables.users.userId})
     .get();
 
-  if (!insertedUser)
+  if (!inserted)
     throw createError({
       statusMessage: 'The email is invalid or already taken',
     });
@@ -45,7 +45,7 @@ export default eventHandler(async (event) => {
   const expiresAt = Date.now() + 60 * 60 * 1000;
 
   await useDrizzle().insert(tables.verificationTokens).values({
-    userId: insertedUser.id,
+    userId: inserted.id,
     hashedToken,
     expiresAt,
   });
@@ -60,5 +60,5 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  return {insertedUser};
+  return {inserted};
 });

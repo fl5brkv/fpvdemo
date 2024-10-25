@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    experimental: {
+      tasks: true,
+    },
     rollupConfig: {
       // @ts-ignore
       plugins: [vue()],
@@ -37,6 +40,13 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       exclude: ['vee-validate'],
+    },
+  },
+  css: ['~/assets/css/main.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
     },
   },
   compatibilityDate: '2024-04-03',

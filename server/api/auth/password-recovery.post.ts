@@ -1,14 +1,14 @@
 import {sha256} from 'ohash';
 import {randomBytes} from 'crypto';
 
-const passwordRecoverySchema = z.object({
+const validationSchema = z.object({
   randomToken: z.string(),
   plaintextPassword: z.string().min(6),
 });
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    passwordRecoverySchema.safeParse(body)
+    validationSchema.safeParse(body)
   );
 
   if (!result.success)
