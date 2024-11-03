@@ -1,11 +1,9 @@
-import {randomBytes} from 'crypto';
-import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import PasswordRecovery from '@/components/Email/PasswordRecovery.vue';
+import {passwordRecoverySchema} from '~/server/database/schemas/tables/users';
+import {nanoid} from 'nanoid';
 
-const validationSchema = z.object({
-  email: z.string().email().toLowerCase(),
-});
+const validationSchema = passwordRecoverySchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -17,23 +15,22 @@ export default eventHandler(async (event) => {
 
   const {email} = result.data;
 
-  const selectedUser = await useDrizzle()
+  const selected = await useDrizzle()
     .select()
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser) throw createError({statusMessage: 'User not found'});
+  if (!selected) throw createError({statusMessage: 'User not found'});
 
-  const randomToken = randomBytes(32).toString('hex');
+  const randomToken = nanoid();
 
-  const hashedToken = sha256(randomToken);
+  const hashedToken = await hashPassword(randomToken);
 
-  // 15 minutes
-  const expiresAt = Date.now() + 15 * 60 * 1000;
+  const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes
 
   await useDrizzle().insert(tables.recoveryTokens).values({
-    userId: selectedUser.userId,
+    userId: selected.userId,
     hashedToken,
     expiresAt,
   });

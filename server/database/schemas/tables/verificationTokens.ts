@@ -13,12 +13,12 @@ export const verificationTokens = sqliteTable('verification_tokens', {
   expiresAt: integer('expires_at', {mode: 'number'}).notNull(),
 });
 
-export const verificationTokensRelations = relations(
-  verificationTokens,
-  ({one}) => ({
-    user: one(users, {
-      fields: [verificationTokens.userId],
-      references: [users.userId],
-    }),
-  })
-);
+// export const verificationTokensRelations = relations(
+//   verificationTokens,
+//   ({one}) => ({
+//     user: one(users, {
+//       fields: [verificationTokens.userId],
+//       references: [users.userId],
+//     }),
+//   })
+// );

@@ -1,11 +1,9 @@
-import {randomBytes} from 'crypto';
-import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
+import {emailVerificationSchema} from '~/server/database/schemas/tables/users';
+import {nanoid} from 'nanoid';
 
-const validationSchema = z.object({
-  email: z.string().email().toLowerCase(),
-});
+const validationSchema = emailVerificationSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -17,26 +15,26 @@ export default eventHandler(async (event) => {
 
   const {email} = result.data;
 
-  const selectedUser = await useDrizzle()
+  const selected = await useDrizzle()
     .select()
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selectedUser)
+  if (!selected)
     throw createError({statusMessage: 'No user found with the provided email'});
 
-  if (selectedUser.verifiedEmail)
+  if (selected.verifiedEmail)
     throw createError({statusMessage: 'Email already verified'});
 
-  const randomToken = randomBytes(32).toString('hex');
+  const randomToken = nanoid();
 
-  const hashedToken = sha256(randomToken);
+  const hashedToken = await hashPassword(randomToken);
 
-  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
 
   await useDrizzle().insert(tables.verificationTokens).values({
-    userId: selectedUser.userId,
+    userId: selected.userId,
     hashedToken,
     expiresAt,
   });

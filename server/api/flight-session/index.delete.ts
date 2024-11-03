@@ -1,6 +1,6 @@
-const validationSchema = z.object({
-  flightSessionId: z.number().int().positive(),
-});
+import {deleteFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
+
+const validationSchema = deleteFlightSessionSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -13,16 +13,15 @@ export default eventHandler(async (event) => {
 
   const {flightSessionId} = result.data;
 
-  await requireUserSession(event);
+  // await requireUserSession(event);
 
-  const deletedFlightSession = await useDrizzle()
+  const deleted = await useDrizzle()
     .delete(tables.flightSessions)
     .where(eq(tables.flightSessions.flightSessionId, flightSessionId));
 
-  if (!deletedFlightSession)
+  if (!deleted)
     throw createError({
-      statusMessage:
-        'No flight sessions were deleted. Flight session not found.',
+      statusMessage: 'No items were deleted. Item not found.',
     });
 
   return 'Delete successful';

@@ -115,8 +115,16 @@
 <script setup lang="ts">
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {insertItemSchema} from '~/server/database/schemas/tables/items';
-const {insertItem, error} = await useItem();
+import {updateItemSchema} from '~/server/database/schemas/tables/items';
+
+const {updateItem, error} = await useItem();
+
+import type {z} from 'zod';
+import type {selectItemSchema} from '~/server/database/schemas/tables/items';
+
+const props = defineProps<{
+  selectedItem: z.infer<typeof selectItemSchema> | null;
+}>();
 
 const category = [
   'goggles',
@@ -155,15 +163,19 @@ const status = [
   'discarded',
 ] as const;
 
-const {
-  handleSubmit,
-  errors,
-  defineField,
-  isSubmitting,
-  resetForm,
-  submitCount,
-} = useForm({
-  validationSchema: toTypedSchema(insertItemSchema),
+const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
+  initialValues: {
+    itemId: props.selectedItem?.itemId,
+    itemName: props.selectedItem?.itemName,
+    category: props.selectedItem?.category,
+    status: props.selectedItem?.status,
+    purchasePrice: props.selectedItem?.purchasePrice,
+    purchaseDate: props.selectedItem?.purchaseDate,
+    salePrice: props.selectedItem?.salePrice,
+    saleDate: props.selectedItem?.saleDate,
+    additionalInfo: props.selectedItem?.additionalInfo,
+  },
+  validationSchema: toTypedSchema(updateItemSchema),
 });
 
 const [itemName, itemNameAttrs] = defineField('itemName');
@@ -176,6 +188,6 @@ const [saleDate, saleDateAttrs] = defineField('saleDate');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  insertItem(values);
+  updateItem(values);
 });
 </script>

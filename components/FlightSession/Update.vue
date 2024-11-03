@@ -78,6 +78,17 @@
     </div>
 
     <div class="mb-4">
+      <label class="block text-sm font-medium text-gray-700">Drones</label>
+      <input
+        type="text"
+        v-model="drones"
+        v-bind="dronesAttrs"
+        class="mt-1 p-2 border border-gray-300 rounded w-full"
+        placeholder="Enter drones" />
+      <div class="text-red-500 text-sm">{{ errors.drones }}</div>
+    </div>
+
+    <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700"
         >Additional Info</label
       >
@@ -105,9 +116,18 @@
 <script setup lang="ts">
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {insertFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
-const {insertFlightSession, error} = await useFlightSession();
-const {items} = await useItem();
+
+const {updateFlightSession, error} = await useFlightSession();
+
+import type {z} from 'zod';
+import {
+  updateFlightSessionSchema,
+  type selectFlightSessionSchema,
+} from '~/server/database/schemas/tables/flightSessions';
+
+const props = defineProps<{
+  selectedFlightSession: z.infer<typeof selectFlightSessionSchema> | null;
+}>();
 
 const purposes = [
   'recreational',
@@ -126,7 +146,18 @@ const purposes = [
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount, values} =
   useForm({
-    validationSchema: toTypedSchema(insertFlightSessionSchema),
+    initialValues: {
+      flightSessionId: props.selectedFlightSession?.flightSessionId,
+      datetimeStart: props.selectedFlightSession?.datetimeStart,
+      datetimeEnd: props.selectedFlightSession?.datetimeEnd,
+      location: props.selectedFlightSession?.location,
+      numberOfFlights: props.selectedFlightSession?.numberOfFlights,
+      timeInAir: props.selectedFlightSession?.timeInAir,
+      purpose: props.selectedFlightSession?.purpose,
+      drones: props.selectedFlightSession?.drones,
+      additionalInfo: props.selectedFlightSession?.additionalInfo,
+    },
+    validationSchema: toTypedSchema(updateFlightSessionSchema),
   });
 
 const [datetimeStart, datetimeStartAttrs] = defineField('datetimeStart');
@@ -135,9 +166,10 @@ const [location, locationAttrs] = defineField('location');
 const [numberOfFlights, numberOfFlightsAttrs] = defineField('numberOfFlights');
 const [timeInAir, timeInAirAttrs] = defineField('timeInAir');
 const [purpose, purposeAttrs] = defineField('purpose');
+const [drones, dronesAttrs] = defineField('drones');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  insertFlightSession(values);
+  updateFlightSession(values);
 });
 </script>

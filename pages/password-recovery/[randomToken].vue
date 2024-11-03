@@ -1,14 +1,8 @@
-<!-- not working -->
-
 <template>
-  {{ randomToken }}
   <div>
     <form @submit="onSubmit">
-      <input
-        type="password"
-        v-model="plaintextPassword"
-        v-bind="plaintextPasswordAttrs" />
-      <div>{{ errors.plaintextPassword }}</div>
+      <input type="password" v-model="password" v-bind="passwordAttrs" />
+      <div>{{ errors.password }}</div>
 
       <button :disabled="isSubmitting || submitCount > 1" @click="onSubmit">
         <span v-if="isSubmitting"> 🕒 Submitting... </span>
@@ -24,37 +18,22 @@
 <script setup lang="ts">
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {z} from 'zod';
+import {passwordRecoveryRandomTokenSchema} from '~/server/database/schemas/tables/users';
+const {error, passwordRecoveryRandomToken} = await useUser();
 
 const route = useRoute();
-const randomToken = route.params.randomToken;
 
-const error = ref<string | null>(null);
+const {handleSubmit, errors, defineField, isSubmitting, submitCount, setFieldValue} = useForm(
+  {
+    validationSchema: toTypedSchema(passwordRecoveryRandomTokenSchema),
+  }
+);
 
-const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
-  initialValues: {randomToken},
-  validationSchema: toTypedSchema(
-    z.object({
-      randomToken: z.string(),
-      plaintextPassword: z.string().min(1),
-    })
-  ),
-});
+setFieldValue('randomToken', route.params.randomToken[0])
 
-const [plaintextPassword, plaintextPasswordAttrs] =
-  defineField('plaintextPassword');
+const [password, passwordAttrs] = defineField('password');
 
 const onSubmit = handleSubmit(async (values) => {
-  try {
-    const res = await $fetch('/api/auth/password-recovery', {
-      method: 'POST',
-      body: values,
-    });
-    navigateTo('/login');
-  } catch (err: any) {
-    error.value = err
-      ? err.statusMessage
-      : 'Oops! Something went wrong. Please try again later.';
-  }
+  passwordRecoveryRandomToken(values);
 });
 </script>

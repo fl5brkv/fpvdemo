@@ -20,7 +20,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in data" :key="item.itemId">
+        <tr v-for="item in items" :key="item.itemId">
           <td class="px-4 py-2 border-b">{{ item.itemId }}</td>
           <td class="px-4 py-2 border-b">{{ item.userId }}</td>
           <td class="px-4 py-2 border-b">{{ item.itemName }}</td>
@@ -33,53 +33,39 @@
           <td class="px-4 py-2 border-b">{{ item.additionalInfo }}</td>
           <td class="px-4 py-2 border-b">{{ item.updatedAt }}</td>
           <td class="px-4 py-2 border-b">{{ item.createdAt }}</td>
+          <td class="px-4 py-2 border-b">
+            <button
+              @click="selectItem(item)"
+              class="text-blue-500 hover:underline">
+              Edit
+            </button>
+          </td>
+          <td class="px-4 py-2 border-b">
+            <button
+              @click="deleteItem(item.itemId)"
+              class="text-blue-500 hover:underline">
+              Delete
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
+    <div v-if="selectedItem">
+      <ItemUpdate :selected-item="selectedItem"></ItemUpdate>
+    </div>
   </div>
+  {{ error }}
 </template>
 
 <script setup lang="ts">
-// select
-const {data} = await useFetch('/api/item');
+import type {z} from 'zod';
+import type {selectItemSchema} from '~/server/database/schemas/tables/items';
 
-// const call = async () => {
-//   try {
-//     await $fetch('/api/item', {
-//       method: 'POST',
-//       body: {
-//         itemRow: [
-//           {
-//             itemName: 'battery 1',
-//             category: 'battery',
-//           },
-//           {
-//             itemName: 'fpv drone 1',
-//             category: 'fpv drone',
-//           },
-//           {
-//             itemName: 'Goggles',
-//             category: 'goggles',
-//           },
-//           {
-//             itemName: 'fpv drone 2',
-//             category: 'fpv drone',
-//           },
-//         ],
-//         batteryRow: [
-//           {
-//             chargeCycles: 19,
-//             fullyChargedDays: 1,
-//           },
-//           {
-//             chargeCycles: 10,
-//             fullyChargedDays: 2,
-//           },
-//         ],
-//       },
-//     });
-//   } catch (err: any) {
-//     console.log(err);
-//   }
-// };
+const {items, error, deleteItem} = await useItem();
+
+const selectedItem = ref<z.infer<typeof selectItemSchema> | null>(null);
+
+const selectItem = (item: z.infer<typeof selectItemSchema>) => {
+  selectedItem.value = {...item};
+};
 </script>

@@ -1,12 +1,9 @@
-import {randomBytes} from 'crypto';
-import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
+import {signupSchema} from '~/server/database/schemas/tables/users';
+import {nanoid} from 'nanoid';
 
-const validationSchema = z.object({
-  email: z.string().email().toLowerCase(),
-  plaintextPassword: z.string().min(6),
-});
+const validationSchema = signupSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -16,16 +13,17 @@ export default eventHandler(async (event) => {
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
-  const {email, plaintextPassword} = result.data;
+  const {email, password} = result.data;
 
-  const passwordSalt = randomBytes(16).toString('hex');
-  const hashedPassword = sha256(plaintextPassword + passwordSalt);
+  const passwordSalt = nanoid();
+
+  const hashedPassword = await hashPassword(password + passwordSalt);
 
   const inserted = await useDrizzle()
     .insert(tables.users)
     .values({
       email,
-      hashedPassword,
+      password: hashedPassword,
       passwordSalt,
     })
     .onConflictDoNothing()
@@ -37,12 +35,11 @@ export default eventHandler(async (event) => {
       statusMessage: 'The email is invalid or already taken',
     });
 
-  const randomToken = randomBytes(32).toString('hex');
+  const randomToken = nanoid();
 
-  const hashedToken = sha256(randomToken);
+  const hashedToken = await hashPassword(randomToken);
 
-  // 1 hour
-  const expiresAt = Date.now() + 60 * 60 * 1000;
+  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
 
   await useDrizzle().insert(tables.verificationTokens).values({
     userId: inserted.id,
@@ -60,5 +57,5 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  return {inserted};
+  return 'Register succesfull';
 });

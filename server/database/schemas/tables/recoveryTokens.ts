@@ -13,9 +13,9 @@ export const recoveryTokens = sqliteTable('recovery_tokens', {
   expiresAt: integer('expires_at', {mode: 'number'}).notNull(),
 });
 
-export const recoveryTokensRelations = relations(recoveryTokens, ({one}) => ({
-  user: one(users, {
-    fields: [recoveryTokens.userId],
-    references: [users.userId],
-  }),
-}));
+// export const recoveryTokensRelations = relations(recoveryTokens, ({one}) => ({
+//   user: one(users, {
+//     fields: [recoveryTokens.userId],
+//     references: [users.userId],
+//   }),
+// }));

@@ -1,51 +1,6 @@
-const category = [
-  'goggles',
-  'radio (TX)',
-  'goggles', // contains video receiver (VRX)
-  'action camera',
-  'ND filters',
-  'SD card',
-  'SSD',
-  'USB drive',
-  'battery charger',
-  'charger accessories',
-  'LiPo bag',
-  'toolkit',
-  'game',
-  'drone',
-  'battery',
-  'frame',
-  'motors',
-  'props',
-  'FC',
-  'ESC',
-  'AIO (FC + ESC)',
-  'GPS',
-  'receiver (RX)',
-  'transmitter (VTX)',
-  'other',
-] as const;
+import { updateItemSchema } from "~/server/database/schemas/tables/items";
 
-const status = [
-  'new',
-  'active',
-  'inactive',
-  'damaged',
-  'sold',
-  'discarded',
-] as const;
-
-const validationSchema = z.object({
-  itemId: z.number().int(),
-  itemName: z.string().min(1),
-  categories: z.enum(category),
-  statuses: z.enum(status).optional(),
-  purchasePrice: z.number().int().positive().optional(),
-  purchaseDate: z.string().optional(),
-  salePrice: z.number().int().positive().optional(),
-  saleDate: z.string().optional(),
-  additionalInfo: z.string().optional(),
-});
+const validationSchema = updateItemSchema
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -55,10 +10,10 @@ export default eventHandler(async (event) => {
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
-  await requireUserSession(event);
+  // await requireUserSession(event);
 
   const {itemId, ...item} = result.data;
-
+  
   const updated = await useDrizzle()
     .update(tables.items)
     .set(item)

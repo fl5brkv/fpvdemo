@@ -1,7 +1,7 @@
 import {relations, sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
-import {itemsToFlightSessions} from './itemsToFlightSessions';
+import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
 
 export const items = sqliteTable('items', {
   itemId: integer('item_id', {mode: 'number'}).primaryKey({
@@ -57,10 +57,29 @@ export const items = sqliteTable('items', {
     .notNull(),
 });
 
-export const itemsRelations = relations(items, ({one, many}) => ({
-  user: one(users, {
-    fields: [items.userId],
-    references: [users.userId],
-  }),
-  itemsToFlightSessions: many(itemsToFlightSessions),
-}));
+export const selectItemSchema = createSelectSchema(items);
+
+export const insertItemSchema = createInsertSchema(items).omit({
+  itemId: true,
+  userId: true,
+  updatedAt: true,
+  createdAt: true,
+});
+
+export const updateItemSchema = createSelectSchema(items).omit({
+  userId: true,
+  updatedAt: true,
+  createdAt: true,
+});
+
+export const deleteItemSchema = createSelectSchema(items).pick({
+  itemId: true,
+});
+
+// export const itemsRelations = relations(items, ({one, many}) => ({
+//   user: one(users, {
+//     fields: [items.userId],
+//     references: [users.userId],
+//   }),
+//   itemsToFlightSessions: many(itemsToFlightSessions),
+// }));

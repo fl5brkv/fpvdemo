@@ -1,12 +1,9 @@
-import {randomBytes} from 'crypto';
-import {sha256} from 'ohash';
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
-import {User} from '~/server/utils/drizzle';
+import {emailChangeUserSchema} from '~/server/database/schemas/tables/users';
+import {nanoid} from 'nanoid';
 
-const validationSchema = z.object({
-  newEmail: z.string().email().toLowerCase(),
-});
+const validationSchema = emailChangeUserSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -15,33 +12,30 @@ export default eventHandler(async (event) => {
 
   if (!result.success) throw createError('errorin');
 
-  const {newEmail} = result.data;
+  const {email} = result.data;
 
-  const {user} = (await requireUserSession(event)) as {user: User};
+  const {user} = await requireUserSession(event);
 
-  const updatedUser = await useDrizzle()
+  const updated = await useDrizzle()
     .update(tables.users)
     .set({
-      email: newEmail,
+      email,
       verifiedEmail: false,
     })
-    .where(eq(tables.users.userId, user.userId))
+    .where(eq(tables.users.email, user.email))
     .returning()
     .get();
 
-  if (!updatedUser) {
-    throw createError('user nebol najdeny, takze nebol updatovany');
-  }
+  if (!updated) throw createError('user nebol najdeny, takze nebol updatovany');
 
-  const randomToken = randomBytes(32).toString('hex');
+  const randomToken = nanoid();
 
-  const hashedToken = sha256(randomToken);
+  const hashedToken = await hashPassword(randomToken);
 
-  // 1 hour
-  const expiresAt = Date.now() + 60 * 60 * 1000;
+  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
 
   await useDrizzle().insert(tables.verificationTokens).values({
-    userId: updatedUser.userId,
+    userId: updated.userId,
     hashedToken,
     expiresAt,
   });
@@ -54,7 +48,7 @@ export default eventHandler(async (event) => {
 
   const {sendMail} = useNodeMailer();
 
-  await sendMail({subject: 'neviem', to: newEmail, html});
+  await sendMail({subject: 'neviem', to: email, html});
 
   await clearUserSession(event);
 

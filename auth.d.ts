@@ -1,7 +1,7 @@
 // auth.d.ts
 declare module '#auth-utils' {
   interface User {
-    userId: number; // Instead of `user: number`, specify `userId`
+    email: string; 
   }
 
   interface UserSession {

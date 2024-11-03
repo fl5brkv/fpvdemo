@@ -1,6 +1,6 @@
-const validationSchema = z.object({
-  itemId: z.number().int().positive(),
-});
+import {deleteItemSchema} from '~/server/database/schemas/tables/items';
+
+const validationSchema = deleteItemSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -11,8 +11,8 @@ export default eventHandler(async (event) => {
     throw createError({statusMessage: 'The provided data is invalid'});
 
   const {itemId} = result.data;
-
-  await requireUserSession(event);
+  
+  // await requireUserSession(event);
 
   const deleted = await useDrizzle()
     .delete(tables.items)

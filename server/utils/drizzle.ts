@@ -9,5 +9,3 @@ export function useDrizzle() {
 }
 
 export { eq, and, gt } from 'drizzle-orm'
-
-export type User = typeof schema.users.$inferSelect;

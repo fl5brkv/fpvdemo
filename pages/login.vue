@@ -3,11 +3,8 @@
     <input type="email" v-model="email" v-bind="emailAttrs" />
     <div>{{ errors.email }}</div>
 
-    <input
-      type="password"
-      v-model="plaintextPassword"
-      v-bind="plaintextPasswordAttrs" />
-    <div>{{ errors.plaintextPassword }}</div>
+    <input type="password" v-model="password" v-bind="passwordAttrs" />
+    <div>{{ errors.password }}</div>
 
     <button :disabled="isSubmitting || submitCount > 5">
       <span v-if="isSubmitting"> 🕒 Submitting... </span>
@@ -33,34 +30,18 @@
 <script setup lang="ts">
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {z} from 'zod';
+import {loginSchema} from '~/server/database/schemas/tables/users';
+
+const {error, login} = await useUser();
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
-  validationSchema: toTypedSchema(
-    z.object({
-      email: z.string().min(1).email().default('mail@mail.mail'),
-      plaintextPassword: z.string().min(6).default('heslo123'),
-    })
-  ),
+  validationSchema: toTypedSchema(loginSchema),
 });
 
-const error = ref<string | null>(null);
-
 const [email, emailAttrs] = defineField('email');
-const [plaintextPassword, plaintextPasswordAttrs] =
-  defineField('plaintextPassword');
+const [password, passwordAttrs] = defineField('password');
 
 const onSubmit = handleSubmit(async (values) => {
-  try {
-    await $fetch('/api/auth/login', {
-      method: 'POST',
-      body: values,
-    });
-    navigateTo('/', {external: true});
-  } catch (err: any) {
-    error.value = err
-      ? err.statusMessage
-      : 'Oops! Something went wrong. Please try again later.';
-  }
+  login(values);
 });
 </script>

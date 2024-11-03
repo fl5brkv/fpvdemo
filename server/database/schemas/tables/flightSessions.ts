@@ -1,7 +1,7 @@
 import {relations, sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
-import {itemsToFlightSessions} from './itemsToFlightSessions';
+import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
 
 export const flightSessions = sqliteTable('flight_sessions', {
   flightSessionId: integer('flight_session_id', {mode: 'number'}).primaryKey({
@@ -14,8 +14,6 @@ export const flightSessions = sqliteTable('flight_sessions', {
   datetimeStart: text('datetime_start'),
   datetimeEnd: text('datetime_end'),
   location: text('location'),
-  lat: integer('lat'),
-  lng: integer('lng'),
   numberOfFlights: integer('number_of_flights', {mode: 'number'}),
   timeInAir: integer('time_in_air', {mode: 'number'}),
   purpose: text('purpose', {
@@ -44,13 +42,40 @@ export const flightSessions = sqliteTable('flight_sessions', {
     .notNull(),
 });
 
-export const flightSessionsRelations = relations(
-  flightSessions,
-  ({one, many}) => ({
-    user: one(users, {
-      fields: [flightSessions.userId],
-      references: [users.userId],
-    }),
-    itemsToFlightSessions: many(itemsToFlightSessions),
-  })
-);
+export const selectFlightSessionSchema = createSelectSchema(flightSessions);
+
+export const insertFlightSessionSchema = createInsertSchema(
+  flightSessions
+).omit({
+  flightSessionId: true,
+  userId: true,
+  publicFlightSessionId: true,
+  updatedAt: true,
+  createdAt: true,
+});
+
+export const updateFlightSessionSchema = createSelectSchema(
+  flightSessions
+).omit({
+  publicFlightSessionId: true,
+  userId: true,
+  updatedAt: true,
+  createdAt: true,
+});
+
+export const deleteFlightSessionSchema = createSelectSchema(
+  flightSessions
+).pick({
+  flightSessionId: true,
+});
+
+// export const flightSessionsRelations = relations(
+//   flightSessions,
+//   ({one, many}) => ({
+//     user: one(users, {
+//       fields: [flightSessions.userId],
+//       references: [users.userId],
+//     }),
+//     itemsToFlightSessions: many(itemsToFlightSessions),
+//   })
+// );
