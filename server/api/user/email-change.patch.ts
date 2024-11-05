@@ -1,9 +1,9 @@
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
-import {emailChangeUserSchema} from '~/server/database/schemas/tables/users';
+import {emailChangeSchema} from '~/server/database/schemas/tables/users';
 import {nanoid} from 'nanoid';
 
-const validationSchema = emailChangeUserSchema;
+const validationSchema = emailChangeSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>

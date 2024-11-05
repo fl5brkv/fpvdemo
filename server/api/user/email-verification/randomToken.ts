@@ -1,3 +1,5 @@
+import * as z from 'zod';
+
 const validationSchema = z.object({
   randomToken: z.string(),
 });
