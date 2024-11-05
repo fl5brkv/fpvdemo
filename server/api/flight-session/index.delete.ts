@@ -24,5 +24,5 @@ export default eventHandler(async (event) => {
       statusMessage: 'No items were deleted. Item not found.',
     });
 
-  return 'Delete successful';
+  return 'Your flight sessionhas been successfully deleted!';
 });

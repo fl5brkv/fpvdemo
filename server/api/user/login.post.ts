@@ -46,5 +46,5 @@ export default eventHandler(async (event) => {
     },
   });
 
-  return 'Login succesfull';
+  return sendRedirect(event, '/');
 });

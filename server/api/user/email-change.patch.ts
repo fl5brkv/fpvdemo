@@ -50,7 +50,9 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
+  // toto tu nebude nebudem logoutovat usera aby sa nevymkli z uctu, 
+  // staci ked vytvorim middleware, ktory checkne ci je email verified
   await clearUserSession(event);
 
-  return 'succesfull';
+  return 'Your email has been succesfully updated! Please verify your new email address.';
 });

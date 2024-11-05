@@ -25,5 +25,5 @@ export default eventHandler(async (event) => {
         'No flight sessions were updated. Flight session not found.',
     });
 
-  return 'Update successful';
+  return 'Your flight session has been successfully updated!';
 });

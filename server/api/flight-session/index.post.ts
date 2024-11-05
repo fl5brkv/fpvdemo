@@ -36,5 +36,5 @@ export default eventHandler(async (event) => {
       statusMessage: 'Failed to create flight session',
     });
 
-  return 'Inserted flight session/s and linked items successfully!';
+  return 'Your flight session has been successfully added!';
 });

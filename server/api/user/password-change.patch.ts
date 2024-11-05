@@ -53,5 +53,5 @@ export default eventHandler(async (event) => {
     throw createError('user nebol updatovany');
   }
 
-  return 'Updates succesfully';
+  return 'Your password has been successfully updated!';
 });

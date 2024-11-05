@@ -15,16 +15,15 @@
 
   <span v-if="error">
     <span
-      v-if="error === 'Your email is not verified. Please verify your email.'">
+      v-if="
+        error === 'Your email is not verified. Please verify your email.' &&
+        email
+      ">
       Your email is not verified.
-      <NuxtLink to="email-verification/resend">resend</NuxtLink>
+      <button v-if="email" @click="emailVerification({email})">resend</button>
     </span>
     <span v-else>{{ error }}</span>
   </span>
-
-  <div>
-    <NuxtLink to="/password-recovery/request">zabudol som heslo</NuxtLink>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -32,7 +31,7 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {loginSchema} from '~/server/database/schemas/tables/users';
 
-const {error, login} = await useUser();
+const {error, login, emailVerification} = await useUser();
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   validationSchema: toTypedSchema(loginSchema),

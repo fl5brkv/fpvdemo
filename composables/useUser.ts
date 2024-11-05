@@ -78,7 +78,7 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
-      navigateTo({path: '/password-recovery/sent'});
+      navigateTo({path: '/email-verification/sent'});
     } catch (err: any) {
       error.value = err
         ? err.statusMessage

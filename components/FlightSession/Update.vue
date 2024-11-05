@@ -78,17 +78,6 @@
     </div>
 
     <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Drones</label>
-      <input
-        type="text"
-        v-model="drones"
-        v-bind="dronesAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full"
-        placeholder="Enter drones" />
-      <div class="text-red-500 text-sm">{{ errors.drones }}</div>
-    </div>
-
-    <div class="mb-4">
       <label class="block text-sm font-medium text-gray-700"
         >Additional Info</label
       >
@@ -154,7 +143,6 @@ const {handleSubmit, errors, defineField, isSubmitting, submitCount, values} =
       numberOfFlights: props.selectedFlightSession?.numberOfFlights,
       timeInAir: props.selectedFlightSession?.timeInAir,
       purpose: props.selectedFlightSession?.purpose,
-      drones: props.selectedFlightSession?.drones,
       additionalInfo: props.selectedFlightSession?.additionalInfo,
     },
     validationSchema: toTypedSchema(updateFlightSessionSchema),
@@ -166,7 +154,6 @@ const [location, locationAttrs] = defineField('location');
 const [numberOfFlights, numberOfFlightsAttrs] = defineField('numberOfFlights');
 const [timeInAir, timeInAirAttrs] = defineField('timeInAir');
 const [purpose, purposeAttrs] = defineField('purpose');
-const [drones, dronesAttrs] = defineField('drones');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {

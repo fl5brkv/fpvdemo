@@ -6,7 +6,7 @@ export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
     validationSchema.safeParse(body)
   );
-  
+
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
@@ -27,5 +27,5 @@ export default eventHandler(async (event) => {
       statusMessage: 'The data is invalid.',
     });
 
-  return 'item inserted succesfully';
+  return 'Your item has been successfully added!';
 });

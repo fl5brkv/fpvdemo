@@ -11,7 +11,7 @@ export default eventHandler(async (event) => {
     throw createError({statusMessage: 'The provided data is invalid'});
 
   const {itemId} = result.data;
-  
+
   // await requireUserSession(event);
 
   const deleted = await useDrizzle()
@@ -23,5 +23,5 @@ export default eventHandler(async (event) => {
       statusMessage: 'No items were deleted. Item not found.',
     });
 
-  return 'Delete successful';
+  return 'Your item has been successfully deleted!';
 });

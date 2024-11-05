@@ -1,6 +1,6 @@
-import { updateItemSchema } from "~/server/database/schemas/tables/items";
+import {updateItemSchema} from '~/server/database/schemas/tables/items';
 
-const validationSchema = updateItemSchema
+const validationSchema = updateItemSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -13,7 +13,7 @@ export default eventHandler(async (event) => {
   // await requireUserSession(event);
 
   const {itemId, ...item} = result.data;
-  
+
   const updated = await useDrizzle()
     .update(tables.items)
     .set(item)
@@ -24,5 +24,5 @@ export default eventHandler(async (event) => {
       statusMessage: 'No items were updated. Item not found.',
     });
 
-  return 'Update successful';
+  return 'Your item has been successfully updated!';
 });

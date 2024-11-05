@@ -48,5 +48,5 @@ export default eventHandler(async (event) => {
       )
     );
 
-  return 'User successfully verified';
+  return sendRedirect(event, '/login');
 });

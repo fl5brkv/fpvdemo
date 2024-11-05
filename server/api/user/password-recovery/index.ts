@@ -45,5 +45,5 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  return {message: 'succesfull broooooo'};
+  return 'Please check your email to recover your password!';
 });

@@ -57,5 +57,5 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  return 'Register succesfull';
+  return 'Please check your email to verify your account!';
 });
