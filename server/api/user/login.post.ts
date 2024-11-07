@@ -23,21 +23,19 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selected)
-    throw createError({
-      statusMessage: 'Incorrect email or password.',
-    });
-
-  const hashedPassword = await hashPassword(password + selected.passwordSalt);
-
-  if (!(await verifyPassword(hashedPassword, selected.password)))
-    throw createError({
-      statusMessage: 'Incorrect email or password.',
-    });
+  if (
+    !selected ||
+    !(await verifyPassword(
+      await hashPassword(password + selected.passwordSalt),
+      selected.password
+    ))
+  ) {
+    throw createError({statusMessage: 'Incorrect email or password.'});
+  }
 
   if (!selected.verifiedEmail)
     throw createError({
-      statusMessage: 'Email not verified.',
+      statusMessage: 'Email not verified, please verify it.',
     });
 
   await replaceUserSession(event, {

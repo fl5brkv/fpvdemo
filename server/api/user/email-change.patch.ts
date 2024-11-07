@@ -10,7 +10,8 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('errorin');
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {email} = result.data;
 
@@ -26,7 +27,7 @@ export default eventHandler(async (event) => {
     .returning()
     .get();
 
-  if (!updated) throw createError('user nebol najdeny, takze nebol updatovany');
+  if (!updated) throw createError({statusMessage: 'There was an error'});
 
   const randomToken = nanoid();
 
@@ -50,7 +51,7 @@ export default eventHandler(async (event) => {
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  // toto tu nebude nebudem logoutovat usera aby sa nevymkli z uctu, 
+  // toto tu nebude nebudem logoutovat usera aby sa nevymkli z uctu,
   // staci ked vytvorim middleware, ktory checkne ci je email verified
   await clearUserSession(event);
 

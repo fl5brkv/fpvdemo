@@ -7,9 +7,8 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success) {
+  if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
-  }
 
   const {flightSessionId} = result.data;
 
@@ -21,7 +20,7 @@ export default eventHandler(async (event) => {
 
   if (!deleted)
     throw createError({
-      statusMessage: 'No items were deleted. Item not found.',
+      statusMessage: 'No flight sessions were deleted. Flight session not found.',
     });
 
   return 'Your flight sessionhas been successfully deleted!';

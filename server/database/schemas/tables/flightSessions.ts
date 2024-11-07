@@ -2,6 +2,7 @@ import {relations, sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
+import * as z from 'zod';
 
 export const flightSessions = sqliteTable('flight_sessions', {
   flightSessionId: integer('flight_session_id', {mode: 'number'}).primaryKey({
@@ -42,7 +43,11 @@ export const flightSessions = sqliteTable('flight_sessions', {
     .notNull(),
 });
 
-export const selectFlightSessionSchema = createSelectSchema(flightSessions);
+export const selectFlightSessionSchema = createSelectSchema(flightSessions)
+  .omit({userId: true, updatedAt: true, createdAt: true})
+  .extend({
+    count: z.number(),
+  });
 
 export const insertFlightSessionSchema = createInsertSchema(
   flightSessions

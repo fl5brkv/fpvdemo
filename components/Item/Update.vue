@@ -108,6 +108,8 @@
       <span v-else> Submit </span>
     </button>
 
+    <span v-if="res">{{ res }}</span>
+
     <span v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</span>
   </form>
 </template>
@@ -117,7 +119,7 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {updateItemSchema} from '~/server/database/schemas/tables/items';
 
-const {updateItem, error} = await useItem();
+const {res, updateItem, error} = await useItem();
 
 import type {z} from 'zod';
 import type {selectItemSchema} from '~/server/database/schemas/tables/items';

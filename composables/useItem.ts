@@ -11,6 +11,8 @@ export const useItem = async () => {
     () => null
   );
 
+  const res = ref<string | null>(null);
+
   const error = ref<string | null>(null);
 
   await useFetch('/api/item', {
@@ -21,7 +23,7 @@ export const useItem = async () => {
 
   const insertItem = async (values: z.infer<typeof insertItemSchema>) => {
     try {
-      await $fetch('/api/item', {
+      res.value = await $fetch('/api/item', {
         method: 'POST',
         body: values,
       });
@@ -34,7 +36,7 @@ export const useItem = async () => {
 
   const updateItem = async (values: z.infer<typeof updateItemSchema>) => {
     try {
-      await $fetch('/api/item', {
+      res.value = await $fetch('/api/item', {
         method: 'PATCH',
         body: values,
       });
@@ -51,7 +53,7 @@ export const useItem = async () => {
 
   const deleteItem = async (itemId: number) => {
     try {
-      await $fetch('/api/item', {
+      res.value = await $fetch('/api/item', {
         method: 'DELETE',
         body: {itemId},
       });
@@ -64,5 +66,5 @@ export const useItem = async () => {
     }
   };
 
-  return {items, error, insertItem, updateItem, deleteItem};
+  return {res, items, error, insertItem, updateItem, deleteItem};
 };

@@ -10,6 +10,8 @@
     </button>
   </form>
 
+  <span v-if="res">{{ res }}</span>
+
   <span v-if="error">{{ error }}</span>
 </template>
 
@@ -18,7 +20,7 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {passwordRecoverySchema} from '~/server/database/schemas/tables/users';
 
-const {error, passwordRecovery} = await useUser();
+const {res, error, passwordRecovery} = await useUser();
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   validationSchema: toTypedSchema(passwordRecoverySchema),

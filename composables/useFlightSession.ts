@@ -10,6 +10,8 @@ export const useFlightSession = async () => {
     z.infer<typeof selectFlightSessionSchema>[] | null
   >('flightSessions', () => null);
 
+  const res = ref<string | null>(null);
+
   const error = ref<string | null>(null);
 
   await useFetch('/api/flight-session', {
@@ -22,7 +24,7 @@ export const useFlightSession = async () => {
     values: z.infer<typeof insertFlightSessionSchema>
   ) => {
     try {
-      await $fetch('/api/flight-session', {
+      res.value = await $fetch('/api/flight-session', {
         method: 'POST',
         body: values,
       });
@@ -37,7 +39,7 @@ export const useFlightSession = async () => {
     values: z.infer<typeof updateFlightSessionSchema>
   ) => {
     try {
-      await $fetch('/api/flight-session', {
+      res.value = await $fetch('/api/flight-session', {
         method: 'PATCH',
         body: values,
       });
@@ -56,7 +58,7 @@ export const useFlightSession = async () => {
 
   const deleteFlightSession = async (flightSessionId: number) => {
     try {
-      await $fetch('/api/flight-session', {
+      res.value = await $fetch('/api/flight-session', {
         method: 'DELETE',
         body: {flightSessionId},
       });
@@ -72,6 +74,7 @@ export const useFlightSession = async () => {
   };
 
   return {
+    res,
     flightSessions,
     error,
     insertFlightSession,

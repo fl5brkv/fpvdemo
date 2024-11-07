@@ -2,6 +2,7 @@ import {relations, sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
+import * as z from 'zod';
 
 export const items = sqliteTable('items', {
   itemId: integer('item_id', {mode: 'number'}).primaryKey({
@@ -57,7 +58,11 @@ export const items = sqliteTable('items', {
     .notNull(),
 });
 
-export const selectItemSchema = createSelectSchema(items);
+export const selectItemSchema = createSelectSchema(items)
+  .omit({userId: true, updatedAt: true, createdAt: true})
+  .extend({
+    count: z.number(),
+  });
 
 export const insertItemSchema = createInsertSchema(items).omit({
   itemId: true,

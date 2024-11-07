@@ -8,7 +8,8 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError('errorin');
+  if (!result.success)
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {password, newPassword} = result.data;
 
@@ -23,17 +24,15 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, user.email))
     .get();
 
-  if (!selected)
-    throw createError({
-      statusMessage: 'Incorrect email or password.',
-    });
-
-  const hashedPassword = await hashPassword(password + selected.passwordSalt);
-
-  if (!(await verifyPassword(hashedPassword, selected.password)))
-    throw createError({
-      statusMessage: 'Incorrect password.',
-    });
+  if (
+    !selected ||
+    !(await verifyPassword(
+      await hashPassword(password + selected.passwordSalt),
+      selected.password
+    ))
+  ) {
+    throw createError({statusMessage: 'Incorrect email or password.'});
+  }
 
   const passwordSalt = nanoid();
 
@@ -49,9 +48,7 @@ export default eventHandler(async (event) => {
     .returning()
     .get();
 
-  if (!updated) {
-    throw createError('user nebol updatovany');
-  }
+  if (!updated) throw createError('There was an error.');
 
   return 'Your password has been successfully updated!';
 });

@@ -9,9 +9,7 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({
-      statusMessage: 'The provided data is invalid',
-    });
+    throw createError({statusMessage: 'The provided data is invalid'});
 
   const {password, randomToken} = result.data;
 
@@ -30,7 +28,7 @@ export default eventHandler(async (event) => {
     )
     .get();
 
-  if (!selected) throw createError('Invalid or expired token');
+  if (!selected) throw createError({statusMessage: 'Invalid or expired token'});
 
   const passwordSalt = nanoid();
 

@@ -9,10 +9,7 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success)
-    throw createError({
-      statusMessage: 'Token is missing',
-    });
+  if (!result.success) throw createError({statusMessage: 'Token is missing'});
 
   const {randomToken} = result.data;
 

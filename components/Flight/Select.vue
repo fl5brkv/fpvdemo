@@ -13,16 +13,20 @@
     </button>
   </div>
   <div v-if="selectedFlightSession">
-    <FlightSessionUpdate :selected-flight-session="selectedFlightSession" />
+    <FlightUpdate :selected-flight-session="selectedFlightSession" />
   </div>
-  {{ error }}
+
+  <span v-if="res">{{ res }}</span>
+
+  <span v-if="error">{{ error }}</span>
 </template>
 
 <script setup lang="ts">
 import type {z} from 'zod';
 import type {selectFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
 
-const {flightSessions, error, deleteFlightSession} = await useFlightSession();
+const {res, flightSessions, error, deleteFlightSession} =
+  await useFlightSession();
 
 const selectedFlightSession = ref<z.infer<
   typeof selectFlightSessionSchema

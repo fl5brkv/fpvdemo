@@ -98,6 +98,8 @@
       <span v-else> Submit </span>
     </button>
 
+    <span v-if="res">{{ res }}</span>
+
     <span v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</span>
   </form>
 </template>
@@ -106,8 +108,7 @@
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {insertFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
-const {insertFlightSession, error} = await useFlightSession();
-const {items} = await useItem();
+const {res, insertFlightSession, error} = await useFlightSession();
 
 const purposes = [
   'recreational',
@@ -124,10 +125,9 @@ const purposes = [
   'other',
 ] as const;
 
-const {handleSubmit, errors, defineField, isSubmitting, submitCount, values} =
-  useForm({
-    validationSchema: toTypedSchema(insertFlightSessionSchema),
-  });
+const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
+  validationSchema: toTypedSchema(insertFlightSessionSchema),
+});
 
 const [datetimeStart, datetimeStartAttrs] = defineField('datetimeStart');
 const [datetimeEnd, datetimeEndAttrs] = defineField('datetimeEnd');

@@ -1,19 +1,23 @@
 import type {z} from 'zod';
 import type {
+  emailChangeSchema,
   emailVerificationRandomTokenSchema,
   emailVerificationSchema,
   loginSchema,
+  passwordChangeSchema,
   passwordRecoveryRandomTokenSchema,
   passwordRecoverySchema,
   signupSchema,
 } from '~/server/database/schemas/tables/users';
 
 export const useUser = async () => {
+  const res = ref<string | null>(null);
+
   const error = ref<string | null>(null);
 
   const signup = async (values: z.infer<typeof signupSchema>) => {
     try {
-      await $fetch('/api/user/signup', {
+      res.value = await $fetch('/api/user/signup', {
         method: 'POST',
         body: values,
       });
@@ -30,7 +34,6 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
-      navigateTo('/', {external: true});
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -42,11 +45,10 @@ export const useUser = async () => {
     values: z.infer<typeof passwordRecoverySchema>
   ) => {
     try {
-      await $fetch('/api/user/password-recovery', {
+      res.value = await $fetch('/api/user/password-recovery', {
         method: 'POST',
         body: values,
       });
-      navigateTo({path: '/password-recovery/sent'});
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -62,7 +64,6 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
-      navigateTo('/login');
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -74,11 +75,10 @@ export const useUser = async () => {
     values: z.infer<typeof emailVerificationSchema>
   ) => {
     try {
-      await $fetch('/api/user/email-verification', {
+      res.value = await $fetch('/api/user/email-verification', {
         method: 'POST',
         body: values,
       });
-      navigateTo({path: '/email-verification/sent'});
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -94,7 +94,34 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
-      navigateTo('/login');
+    } catch (err: any) {
+      error.value = err
+        ? err.statusMessage
+        : 'Oops! Something went wrong. Please try again later.';
+    }
+  };
+
+  const emailChange = async (values: z.infer<typeof emailChangeSchema>) => {
+    try {
+      res.value = await $fetch('/api/user/email-change', {
+        method: 'PATCH',
+        body: values,
+      });
+    } catch (err: any) {
+      error.value = err
+        ? err.statusMessage
+        : 'Oops! Something went wrong. Please try again later.';
+    }
+  };
+
+  const passwordChange = async (
+    values: z.infer<typeof passwordChangeSchema>
+  ) => {
+    try {
+      res.value = await $fetch('/api/user/password-change', {
+        method: 'PATCH',
+        body: values,
+      });
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -103,6 +130,7 @@ export const useUser = async () => {
   };
 
   return {
+    res,
     error,
     signup,
     login,
@@ -110,5 +138,7 @@ export const useUser = async () => {
     passwordRecoveryRandomToken,
     emailVerification,
     emailVerificationRandomToken,
+    emailChange,
+    passwordChange,
   };
 };

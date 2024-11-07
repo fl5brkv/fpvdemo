@@ -98,6 +98,8 @@
       <span v-else> Submit </span>
     </button>
 
+    <span v-if="res">{{ res }}</span>
+
     <span v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</span>
   </form>
 </template>
@@ -106,7 +108,7 @@
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 
-const {updateFlightSession, error} = await useFlightSession();
+const {res, updateFlightSession, error} = await useFlightSession();
 
 import type {z} from 'zod';
 import {
