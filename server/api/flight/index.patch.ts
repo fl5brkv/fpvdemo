@@ -1,6 +1,6 @@
-import {updateFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
+import {updateFlightSchema} from '~/server/database/schemas/tables/flights';
 
-const validationSchema = updateFlightSessionSchema;
+const validationSchema = updateFlightSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -10,14 +10,14 @@ export default eventHandler(async (event) => {
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
-  // await requireUserSession(event);
+  await requireUserSession(event);
 
-  const {flightSessionId, ...flightSession} = result.data;
+  const {flightId, ...flight} = result.data;
 
   const updated = await useDrizzle()
-    .update(tables.flightSessions)
-    .set(flightSession)
-    .where(eq(tables.flightSessions.flightSessionId, flightSessionId));
+    .update(tables.flights)
+    .set(flight)
+    .where(eq(tables.flights.flightId, flightId));
 
   if (!updated)
     throw createError({

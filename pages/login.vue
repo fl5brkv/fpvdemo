@@ -14,11 +14,7 @@
   </form>
 
   <span v-if="error">
-    <span
-      v-if="
-        error === 'Email not verified, please verify it.' &&
-        email
-      ">
+    <span v-if="error === 'Email not verified, please verify it.' && email">
       Your email is not verified.
       <button v-if="email" @click="emailVerification({email})">resend</button>
     </span>
@@ -29,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'guest'});
+
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {loginSchema} from '~/server/database/schemas/tables/users';

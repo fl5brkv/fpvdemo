@@ -1,3 +1,4 @@
+import {customAlphabet} from 'nanoid';
 import {insertItemSchema} from '~/server/database/schemas/tables/items';
 
 const validationSchema = insertItemSchema;
@@ -16,9 +17,13 @@ export default eventHandler(async (event) => {
 
   const userId = 1;
 
+  const alphabet = '346789abcdefghijkmnpqrtwxyz';
+
+  const nanoid = customAlphabet(alphabet, 21);
+
   const inserted = await useDrizzle()
     .insert(tables.items)
-    .values({...result.data, userId})
+    .values({...result.data, userId, publicItemId: nanoid()})
     .returning({id: tables.items.itemId})
     .get();
 

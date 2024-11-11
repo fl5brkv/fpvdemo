@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'guest'});
+
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {passwordRecoveryRandomTokenSchema} from '~/server/database/schemas/tables/users';
@@ -23,13 +25,18 @@ const {error, passwordRecoveryRandomToken} = await useUser();
 
 const route = useRoute();
 
-const {handleSubmit, errors, defineField, isSubmitting, submitCount, setFieldValue} = useForm(
-  {
-    validationSchema: toTypedSchema(passwordRecoveryRandomTokenSchema),
-  }
-);
+const {
+  handleSubmit,
+  errors,
+  defineField,
+  isSubmitting,
+  submitCount,
+  setFieldValue,
+} = useForm({
+  validationSchema: toTypedSchema(passwordRecoveryRandomTokenSchema),
+});
 
-setFieldValue('randomToken', route.params.randomToken[0])
+setFieldValue('randomToken', route.params.randomToken[0]);
 
 const [password, passwordAttrs] = defineField('password');
 

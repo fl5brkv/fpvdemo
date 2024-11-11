@@ -43,5 +43,5 @@ export default eventHandler(async (event) => {
     .delete(tables.recoveryTokens)
     .where(eq(tables.recoveryTokens.userId, selected.recoveryTokenUserId));
 
-  return sendRedirect(event, '/login');
+  return 'Password recovery succesfull'
 });

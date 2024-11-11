@@ -1,4 +1,4 @@
-import {flightSessions} from './tables/flightSessions';
+import {flights} from './tables/flights';
 import {items} from './tables/items';
 import {recoveryTokens} from './tables/recoveryTokens';
 import {users} from './tables/users';
@@ -8,6 +8,6 @@ export const schema = {
   users,
   verificationTokens,
   recoveryTokens,
-  flightSessions,
+  flights,
   items,
 };

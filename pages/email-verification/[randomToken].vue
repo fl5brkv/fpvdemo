@@ -7,6 +7,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'guest'});
+
 const route = useRoute();
 const randomToken = route.params.randomToken;
 const {error, emailVerificationRandomToken} = await useUser();

@@ -34,6 +34,7 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
+      navigateTo('/account', {replace: true, external: true});
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -60,10 +61,11 @@ export const useUser = async () => {
     values: z.infer<typeof passwordRecoveryRandomTokenSchema>
   ) => {
     try {
-      await $fetch('/api/auth/password-recovery/random-token', {
+      await $fetch('/api/user/password-recovery/random-token', {
         method: 'POST',
         body: values,
       });
+      navigateTo('/login');
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -90,10 +92,11 @@ export const useUser = async () => {
     values: z.infer<typeof emailVerificationRandomTokenSchema>
   ) => {
     try {
-      await $fetch('/api/auth/password-recovery/random-token', {
+      await $fetch('/api/user/email-verification/random-token', {
         method: 'POST',
         body: values,
       });
+      navigateTo('/login');
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -107,6 +110,7 @@ export const useUser = async () => {
         method: 'PATCH',
         body: values,
       });
+      navigateTo('/login');
     } catch (err: any) {
       error.value = err
         ? err.statusMessage

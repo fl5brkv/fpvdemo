@@ -1,7 +1,8 @@
 // auth.d.ts
 declare module '#auth-utils' {
   interface User {
-    email: string; 
+    userId: number;
+    email: string;
   }
 
   interface UserSession {

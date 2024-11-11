@@ -1,8 +1,7 @@
-import {relations, sql} from 'drizzle-orm';
+import {sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
-import * as z from 'zod';
 
 export const items = sqliteTable('items', {
   itemId: integer('item_id', {mode: 'number'}).primaryKey({
@@ -11,6 +10,7 @@ export const items = sqliteTable('items', {
   userId: integer('user_id')
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
+  publicItemId: text('public_item_id').unique().notNull(),
   itemName: text('item_name').notNull(),
   category: text('category', {
     enum: [
@@ -58,21 +58,23 @@ export const items = sqliteTable('items', {
     .notNull(),
 });
 
-export const selectItemSchema = createSelectSchema(items)
-  .omit({userId: true, updatedAt: true, createdAt: true})
-  .extend({
-    count: z.number(),
-  });
+export const selectItemSchema = createSelectSchema(items).omit({
+  userId: true,
+  updatedAt: true,
+  createdAt: true,
+});
 
 export const insertItemSchema = createInsertSchema(items).omit({
   itemId: true,
   userId: true,
+  publicItemId: true,
   updatedAt: true,
   createdAt: true,
 });
 
 export const updateItemSchema = createSelectSchema(items).omit({
   userId: true,
+  publicItemId: true,
   updatedAt: true,
   createdAt: true,
 });
@@ -80,11 +82,3 @@ export const updateItemSchema = createSelectSchema(items).omit({
 export const deleteItemSchema = createSelectSchema(items).pick({
   itemId: true,
 });
-
-// export const itemsRelations = relations(items, ({one, many}) => ({
-//   user: one(users, {
-//     fields: [items.userId],
-//     references: [users.userId],
-//   }),
-//   itemsToFlightSessions: many(itemsToFlightSessions),
-// }));

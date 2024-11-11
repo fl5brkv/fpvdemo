@@ -1,108 +1,82 @@
 <template>
-  <form
-    @submit.prevent="onSubmit"
-    class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Item Name</label>
+  <form @submit.prevent="onSubmit">
+    <div>
+      <label>Item Name</label>
       <input
         type="text"
         v-model="itemName"
         v-bind="itemNameAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full"
         placeholder="Enter item name" />
-      <div class="text-red-500 text-sm">{{ errors.itemName }}</div>
+      <div>{{ errors.itemName }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Category</label>
-      <select
-        v-model="categoryField"
-        v-bind="categoryAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full">
+    <div>
+      <label>Category</label>
+      <select v-model="categoryField" v-bind="categoryAttrs">
         <option value="" disabled selected>Select a category</option>
         <option v-for="cat in category" :key="cat" :value="cat">
           {{ cat }}
         </option>
       </select>
-      <div class="text-red-500 text-sm">{{ errors.category }}</div>
+      <div>{{ errors.category }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Status</label>
-      <select
-        v-model="statusField"
-        v-bind="statusAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full">
+    <div>
+      <label>Status</label>
+      <select v-model="statusField" v-bind="statusAttrs">
         <option value="" disabled selected>Select a status</option>
         <option v-for="stat in status" :key="stat" :value="stat">
           {{ stat }}
         </option>
       </select>
-      <div class="text-red-500 text-sm">{{ errors.status }}</div>
+      <div>{{ errors.status }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700"
-        >Purchase Price</label
-      >
+    <div>
+      <label>Purchase Price</label>
       <input
         type="number"
         v-model="purchasePrice"
         v-bind="purchasePriceAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full"
         placeholder="Enter purchase price" />
-      <div class="text-red-500 text-sm">{{ errors.purchasePrice }}</div>
+      <div>{{ errors.purchasePrice }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700"
-        >Purchase Date</label
-      >
+    <div>
+      <label>Purchase Date</label>
       <input
         type="datetime-local"
         v-model="purchaseDate"
-        v-bind="purchaseDateAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full" />
-      <div class="text-red-500 text-sm">{{ errors.purchaseDate }}</div>
+        v-bind="purchaseDateAttrs" />
+      <div>{{ errors.purchaseDate }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Sale Price</label>
+    <div>
+      <label>Sale Price</label>
       <input
         type="number"
         v-model="salePrice"
         v-bind="salePriceAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full"
         placeholder="Enter sale price" />
-      <div class="text-red-500 text-sm">{{ errors.salePrice }}</div>
+      <div>{{ errors.salePrice }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700">Sale Date</label>
-      <input
-        type="datetime-local"
-        v-model="saleDate"
-        v-bind="saleDateAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full" />
-      <div class="text-red-500 text-sm">{{ errors.saleDate }}</div>
+    <div>
+      <label>Sale Date</label>
+      <input type="datetime-local" v-model="saleDate" v-bind="saleDateAttrs" />
+      <div>{{ errors.saleDate }}</div>
     </div>
 
-    <div class="mb-4">
-      <label class="block text-sm font-medium text-gray-700"
-        >Additional Info</label
-      >
+    <div>
+      <label>Additional Info</label>
       <textarea
         v-model="additionalInfo"
         v-bind="additionalInfoAttrs"
-        class="mt-1 p-2 border border-gray-300 rounded w-full"
         placeholder="Enter additional information"></textarea>
-      <div class="text-red-500 text-sm">{{ errors.additionalInfo }}</div>
+      <div>{{ errors.additionalInfo }}</div>
     </div>
 
-    <button
-      type="submit"
-      :disabled="isSubmitting || submitCount > 5"
-      class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400 transition">
+    <button type="submit" :disabled="isSubmitting || submitCount > 5">
       <span v-if="isSubmitting"> 🕒 Submitting... </span>
       <span v-else-if="submitCount > 5"> ❌ Too many attempts </span>
       <span v-else> Submit </span>
@@ -110,11 +84,13 @@
 
     <span v-if="res">{{ res }}</span>
 
-    <span v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</span>
+    <span v-if="error">{{ error }}</span>
   </form>
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'auth'});
+
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {updateItemSchema} from '~/server/database/schemas/tables/items';

@@ -16,6 +16,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'guest'});
+
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {passwordRecoverySchema} from '~/server/database/schemas/tables/users';

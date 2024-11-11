@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { sha256 } from "ohash";
 
 const validationSchema = z.object({
   randomToken: z.string(),
@@ -13,8 +14,8 @@ export default eventHandler(async (event) => {
 
   const {randomToken} = result.data;
 
-  const hashedToken = await hashPassword(randomToken);
-
+  const hashedToken = sha256(randomToken);
+  
   const selected = await useDrizzle()
     .select()
     .from(tables.verificationTokens)
@@ -45,5 +46,5 @@ export default eventHandler(async (event) => {
       )
     );
 
-  return sendRedirect(event, '/login');
+  return 'Email verified'
 });

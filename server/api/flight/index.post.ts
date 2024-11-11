@@ -1,7 +1,7 @@
 import {customAlphabet} from 'nanoid/non-secure';
-import {insertFlightSessionSchema} from '~/server/database/schemas/tables/flightSessions';
+import {insertFlightSchema} from '~/server/database/schemas/tables/flights';
 
-const validationSchema = insertFlightSessionSchema;
+const validationSchema = insertFlightSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -22,19 +22,19 @@ export default eventHandler(async (event) => {
   const nanoid = customAlphabet(alphabet, 21);
 
   const inserted = await useDrizzle()
-    .insert(tables.flightSessions)
+    .insert(tables.flights)
     .values({
       ...result.data,
       userId,
-      publicFlightSessionId: nanoid(),
+      publicFlightId: nanoid(),
     })
-    .returning({flightSessionId: tables.flightSessions.flightSessionId})
+    .returning({flightId: tables.flights.flightId})
     .get();
 
   if (!inserted)
     throw createError({
-      statusMessage: 'Failed to create flight session',
+      statusMessage: 'Failed to create flight',
     });
 
-  return 'Your flight session has been successfully added!';
+  return 'Your flight has been successfully added!';
 });

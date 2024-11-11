@@ -2,6 +2,7 @@ import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 import {signupSchema} from '~/server/database/schemas/tables/users';
 import {nanoid} from 'nanoid';
+import {sha256} from 'ohash';
 
 const validationSchema = signupSchema;
 
@@ -15,16 +16,13 @@ export default eventHandler(async (event) => {
 
   const {email, password} = result.data;
 
-  const passwordSalt = nanoid();
-
-  const hashedPassword = await hashPassword(password + passwordSalt);
+  const hashedPassword = await hashPassword(password)
 
   const inserted = await useDrizzle()
     .insert(tables.users)
     .values({
       email,
       password: hashedPassword,
-      passwordSalt,
     })
     .onConflictDoNothing()
     .returning({id: tables.users.userId})
@@ -37,7 +35,7 @@ export default eventHandler(async (event) => {
 
   const randomToken = nanoid();
 
-  const hashedToken = await hashPassword(randomToken);
+  const hashedToken = sha256(randomToken);
 
   const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
 

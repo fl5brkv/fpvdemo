@@ -19,6 +19,7 @@
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {emailChangeSchema} from '~/server/database/schemas/tables/users';
+const {user} = useUserSession();
 
 const {res, error, emailChange} = await useUser();
 

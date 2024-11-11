@@ -7,21 +7,17 @@
         >
       </div>
       <div>
-        <NuxtLink
-          to="/flights"
-          class="text-xl font-bold text-gray-500 ml-2"
+        <NuxtLink to="/flights" class="text-xl font-bold text-gray-500 ml-2"
           >Flights</NuxtLink
         >
-        <NuxtLink
-          to="/items"
-          class="text-xl font-bold text-gray-500 mr-2"
+        <NuxtLink to="/items" class="text-xl font-bold text-gray-500 mr-2"
           >Items</NuxtLink
         >
       </div>
       <div>
         <div v-if="loggedIn" class="flex items-center space-x-6">
           <button
-            @click="clear"
+            @click="logOut()"
             class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600">
             Logout
           </button>
@@ -45,4 +41,9 @@
 
 <script setup lang="ts">
 const {loggedIn, clear} = useUserSession();
+
+const logOut = () => {
+  clear();
+  navigateTo('/login', {replace: true, external: true});
+};
 </script>

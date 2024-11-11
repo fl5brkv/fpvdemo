@@ -22,6 +22,8 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({middleware: 'guest'});
+
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {signupSchema} from '~/server/database/schemas/tables/users';

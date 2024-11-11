@@ -1,17 +1,16 @@
-import {relations, sql} from 'drizzle-orm';
+import {sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
-import * as z from 'zod';
 
-export const flightSessions = sqliteTable('flight_sessions', {
-  flightSessionId: integer('flight_session_id', {mode: 'number'}).primaryKey({
+export const flights = sqliteTable('flights', {
+  flightId: integer('flight_id', {mode: 'number'}).primaryKey({
     autoIncrement: true,
   }),
   userId: integer('user_id')
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
-  publicFlightSessionId: text('public_flight_session_id').unique().notNull(),
+  publicFlightId: text('public_flight_id').unique().notNull(),
   datetimeStart: text('datetime_start'),
   datetimeEnd: text('datetime_end'),
   location: text('location'),
@@ -43,44 +42,27 @@ export const flightSessions = sqliteTable('flight_sessions', {
     .notNull(),
 });
 
-export const selectFlightSessionSchema = createSelectSchema(flightSessions)
-  .omit({userId: true, updatedAt: true, createdAt: true})
-  .extend({
-    count: z.number(),
-  });
-
-export const insertFlightSessionSchema = createInsertSchema(
-  flightSessions
-).omit({
-  flightSessionId: true,
-  userId: true,
-  publicFlightSessionId: true,
-  updatedAt: true,
-  createdAt: true,
-});
-
-export const updateFlightSessionSchema = createSelectSchema(
-  flightSessions
-).omit({
-  publicFlightSessionId: true,
+export const selectFlightSchema = createSelectSchema(flights).omit({
   userId: true,
   updatedAt: true,
   createdAt: true,
 });
 
-export const deleteFlightSessionSchema = createSelectSchema(
-  flightSessions
-).pick({
-  flightSessionId: true,
+export const insertFlightSchema = createInsertSchema(flights).omit({
+  flightId: true,
+  userId: true,
+  publicFlightId: true,
+  updatedAt: true,
+  createdAt: true,
 });
 
-// export const flightSessionsRelations = relations(
-//   flightSessions,
-//   ({one, many}) => ({
-//     user: one(users, {
-//       fields: [flightSessions.userId],
-//       references: [users.userId],
-//     }),
-//     itemsToFlightSessions: many(itemsToFlightSessions),
-//   })
-// );
+export const updateFlightSchema = createSelectSchema(flights).omit({
+  publicFlightId: true,
+  userId: true,
+  updatedAt: true,
+  createdAt: true,
+});
+
+export const deleteFlightSchema = createSelectSchema(flights).pick({
+  flightId: true,
+});
