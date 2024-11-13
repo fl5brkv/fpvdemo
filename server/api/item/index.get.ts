@@ -9,6 +9,7 @@ export default eventHandler(async (event) => {
   const selected = await useDrizzle()
     .select({
       itemId: tables.items.itemId,
+      publicItemId: tables.items.publicItemId,
       itemName: tables.items.itemName,
       category: tables.items.category,
       status: tables.items.status,
@@ -17,7 +18,6 @@ export default eventHandler(async (event) => {
       salePrice: tables.items.salePrice,
       saleDate: tables.items.saleDate,
       additionalInfo: tables.items.additionalInfo,
-      count: count(),
     })
     .from(tables.items)
     .where(eq(tables.items.userId, userId));

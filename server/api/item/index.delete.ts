@@ -12,7 +12,7 @@ export default eventHandler(async (event) => {
 
   const {itemId} = result.data;
 
-  // await requireUserSession(event);
+  await requireUserSession(event);
 
   const deleted = await useDrizzle()
     .delete(tables.items)

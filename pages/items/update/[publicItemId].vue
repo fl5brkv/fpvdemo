@@ -95,15 +95,15 @@ import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
 import {updateItemSchema} from '~/server/database/schemas/tables/items';
 
-const {res, updateItem, error} = await useItem();
+const {res, items, updateItem, error} = await useItem();
 
-import type {z} from 'zod';
-import type {selectItemSchema} from '~/server/database/schemas/tables/items';
+const route = useRoute();
 
-const props = defineProps<{
-  selectedItem: z.infer<typeof selectItemSchema> | null;
-}>();
-
+const selectedItem = computed(() => {
+  return items.value?.find(
+    (item) => item.publicItemId === route.params.publicItemId
+  );
+});
 const category = [
   'goggles',
   'radio (TX)',
@@ -143,15 +143,15 @@ const status = [
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   initialValues: {
-    itemId: props.selectedItem?.itemId,
-    itemName: props.selectedItem?.itemName,
-    category: props.selectedItem?.category,
-    status: props.selectedItem?.status,
-    purchasePrice: props.selectedItem?.purchasePrice,
-    purchaseDate: props.selectedItem?.purchaseDate,
-    salePrice: props.selectedItem?.salePrice,
-    saleDate: props.selectedItem?.saleDate,
-    additionalInfo: props.selectedItem?.additionalInfo,
+    itemId: selectedItem.value?.itemId,
+    itemName: selectedItem.value?.itemName,
+    category: selectedItem.value?.category,
+    status: selectedItem.value?.status,
+    purchasePrice: selectedItem.value?.purchasePrice,
+    purchaseDate: selectedItem.value?.purchaseDate,
+    salePrice: selectedItem.value?.salePrice,
+    saleDate: selectedItem.value?.saleDate,
+    additionalInfo: selectedItem.value?.additionalInfo,
   },
   validationSchema: toTypedSchema(updateItemSchema),
 });

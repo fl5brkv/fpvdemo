@@ -1,62 +1,70 @@
 <template>
   <form @submit.prevent="onSubmit">
     <div>
-      <label>Start Date & Time</label>
-      <input
-        type="datetime-local"
-        v-model="datetimeStart"
-        v-bind="datetimeStartAttrs" />
-      <div>{{ errors.datetimeStart }}</div>
+      <label>Item name</label>
+      <input type="text" v-model="itemName" v-bind="itemNameAttrs" />
+      <div>{{ errors.itemName }}</div>
     </div>
 
     <div>
-      <label>End Date & Time</label>
-      <input
-        type="datetime-local"
-        v-model="datetimeEnd"
-        v-bind="datetimeEndAttrs" />
-      <div>{{ errors.datetimeEnd }}</div>
-    </div>
-
-    <div>
-      <label>Location</label>
-      <input
-        type="text"
-        v-model="location"
-        v-bind="locationAttrs"
-        placeholder="Enter location" />
-      <div>{{ errors.location }}</div>
-    </div>
-
-    <div>
-      <label>Number of Flights</label>
-      <input
-        type="number"
-        v-model="numberOfFlights"
-        v-bind="numberOfFlightsAttrs"
-        placeholder="Enter number of flights" />
-      <div>{{ errors.numberOfFlights }}</div>
-    </div>
-
-    <div>
-      <label>Time in Air (minutes)</label>
-      <input
-        type="number"
-        v-model="timeInAir"
-        v-bind="timeInAirAttrs"
-        placeholder="Enter time in air" />
-      <div>{{ errors.timeInAir }}</div>
-    </div>
-
-    <div>
-      <label>Purpose</label>
-      <select v-model="purpose" v-bind="purposeAttrs">
-        <option value="" disabled selected>Select a purpose</option>
-        <option v-for="pur in purposes" :key="pur" :value="pur">
-          {{ pur }}
+      <label>Category</label>
+      <select v-model="category" v-bind="categoryAttrs">
+        <option value="" disabled selected>Select a category</option>
+        <option v-for="cat in categories" :key="cat" :value="cat">
+          {{ cat }}
         </option>
       </select>
-      <div>{{ errors.purpose }}</div>
+      <div>{{ errors.category }}</div>
+    </div>
+
+    <div>
+      <label>Status</label>
+      <select v-model="status" v-bind="statusAttrs">
+        <option value="" disabled selected>Select a status</option>
+        <option v-for="stat in statuses" :key="stat" :value="stat">
+          {{ stat }}
+        </option>
+      </select>
+      <div>{{ errors.status }}</div>
+    </div>
+
+    <div>
+      <label>Purchase price</label>
+      <input
+        type="number"
+        v-model="purchasePrice"
+        v-bind="purchasePriceAttrs" />
+      <div>{{ errors.purchasePrice }}</div>
+    </div>
+
+    <div>
+      <label>Purchase date</label>
+      <input
+        type="datetime-local"
+        v-model="purchaseDate"
+        v-bind="purchaseDateAttrs"
+        placeholder="Enter location" />
+      <div>{{ errors.purchaseDate }}</div>
+    </div>
+
+    <div>
+      <label>Sale price</label>
+      <input
+        type="number"
+        v-model="salePrice"
+        v-bind="salePriceAttrs"
+        placeholder="Enter number of flights" />
+      <div>{{ errors.salePrice }}</div>
+    </div>
+
+    <div>
+      <label>Sale date</label>
+      <input
+        type="datetime-local"
+        v-model="saleDate"
+        v-bind="saleDateAttrs"
+        placeholder="Enter time in air" />
+      <div>{{ errors.saleDate }}</div>
     </div>
 
     <div>
@@ -85,37 +93,60 @@ definePageMeta({middleware: 'auth'});
 
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {insertFlightSchema} from '~/server/database/schemas/tables/flights';
-const {res, insertFlight, error} = await useFlight();
+import {insertItemSchema} from '~/server/database/schemas/tables/items';
+const {res, insertItem, error} = await useItem();
 
-const purposes = [
-  'recreational',
-  'testing',
-  'filming',
-  'photography',
-  'racing',
-  'surveying',
-  'inspection',
-  'commercial delivery',
-  'search and rescue',
-  'agriculture',
-  'mapping',
+const categories = [
+  'goggles',
+  'radio (TX)',
+  'goggles', // contains video receiver (VRX)
+  'action camera',
+  'ND filters',
+  'SD card',
+  'SSD',
+  'USB drive',
+  'battery charger',
+  'charger accessories',
+  'LiPo bag',
+  'toolkit',
+  'game',
+  'drone',
+  'battery',
+  'frame',
+  'motors',
+  'props',
+  'FC',
+  'ESC',
+  'AIO (FC + ESC)',
+  'GPS',
+  'receiver (RX)',
+  'transmitter (VTX)',
   'other',
 ] as const;
 
+const statuses = [
+  'new',
+  'active',
+  'inactive',
+  'damaged',
+  'sold',
+  'discarded',
+] as const;
+
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
-  validationSchema: toTypedSchema(insertFlightSchema),
+  validationSchema: toTypedSchema(insertItemSchema),
 });
 
-const [datetimeStart, datetimeStartAttrs] = defineField('datetimeStart');
-const [datetimeEnd, datetimeEndAttrs] = defineField('datetimeEnd');
-const [location, locationAttrs] = defineField('location');
-const [numberOfFlights, numberOfFlightsAttrs] = defineField('numberOfFlights');
-const [timeInAir, timeInAirAttrs] = defineField('timeInAir');
-const [purpose, purposeAttrs] = defineField('purpose');
+const [itemName, itemNameAttrs] = defineField('itemName');
+const [category, categoryAttrs] = defineField('category');
+const [status, statusAttrs] = defineField('status');
+const [purchasePrice, purchasePriceAttrs] = defineField('purchasePrice');
+const [purchaseDate, purchaseDateAttrs] = defineField('purchaseDate');
+const [salePrice, salePriceAttrs] = defineField('salePrice');
+const [saleDate, saleDateAttrs] = defineField('saleDate');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  insertFlight(values);
+  insertItem(values);
 });
 </script>

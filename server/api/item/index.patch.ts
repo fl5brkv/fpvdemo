@@ -10,7 +10,7 @@ export default eventHandler(async (event) => {
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
-  // await requireUserSession(event);
+  await requireUserSession(event);
 
   const {itemId, ...item} = result.data;
 

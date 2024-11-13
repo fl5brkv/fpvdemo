@@ -1,7 +1,5 @@
 <template>
-  <footer :class="childClass">
-    <p>&copy; 2024 MyApp. All rights reserved.</p>
-  </footer>
+  <main :class="childClass"><slot /></main>
 </template>
 
 <script setup lang="ts">

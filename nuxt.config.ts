@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     'nuxt-auth-utils',
     '@nuxtjs/turnstile',
     'nuxt-nodemailer',
+    '@nuxt/fonts',
   ],
   hub: {
     database: true,

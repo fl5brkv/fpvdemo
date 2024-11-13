@@ -84,19 +84,19 @@
 definePageMeta({middleware: 'auth'});
 
 import {useForm} from 'vee-validate';
+
 import {toTypedSchema} from '@vee-validate/zod';
+import {updateFlightSchema} from '~/server/database/schemas/tables/flights';
 
-const {res, updateFlight, error} = await useFlight();
+const {res, flights, updateFlight, error} = await useFlight();
 
-import type {z} from 'zod';
-import {
-  updateFlightSchema,
-  type selectFlightSchema,
-} from '~/server/database/schemas/tables/flights';
+const route = useRoute();
 
-const props = defineProps<{
-  selectedFlight: z.infer<typeof selectFlightSchema> | null;
-}>();
+const selectedFlight = computed(() => {
+  return flights.value?.find(
+    (flight) => flight.publicFlightId === route.params.publicFlightId
+  );
+});
 
 const purposes = [
   'recreational',
@@ -113,20 +113,19 @@ const purposes = [
   'other',
 ] as const;
 
-const {handleSubmit, errors, defineField, isSubmitting, submitCount, values} =
-  useForm({
-    initialValues: {
-      flightId: props.selectedFlight?.flightId,
-      datetimeStart: props.selectedFlight?.datetimeStart,
-      datetimeEnd: props.selectedFlight?.datetimeEnd,
-      location: props.selectedFlight?.location,
-      numberOfFlights: props.selectedFlight?.numberOfFlights,
-      timeInAir: props.selectedFlight?.timeInAir,
-      purpose: props.selectedFlight?.purpose,
-      additionalInfo: props.selectedFlight?.additionalInfo,
-    },
-    validationSchema: toTypedSchema(updateFlightSchema),
-  });
+const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
+  initialValues: {
+    flightId: selectedFlight.value?.flightId,
+    datetimeStart: selectedFlight.value?.datetimeStart,
+    datetimeEnd: selectedFlight.value?.datetimeEnd,
+    location: selectedFlight.value?.location,
+    numberOfFlights: selectedFlight.value?.numberOfFlights,
+    timeInAir: selectedFlight.value?.timeInAir,
+    purpose: selectedFlight.value?.purpose,
+    additionalInfo: selectedFlight.value?.additionalInfo,
+  },
+  validationSchema: toTypedSchema(updateFlightSchema),
+});
 
 const [datetimeStart, datetimeStartAttrs] = defineField('datetimeStart');
 const [datetimeEnd, datetimeEndAttrs] = defineField('datetimeEnd');
@@ -137,6 +136,6 @@ const [purpose, purposeAttrs] = defineField('purpose');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  updateFlight(values);
+  await updateFlight(values);
 });
 </script>

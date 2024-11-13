@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2c4e899a-180b-4a94-afe8-160d3eed4887",
+  "id": "c4e7f662-356f-45f1-a4b4-1fc8591faed1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "flights": {
