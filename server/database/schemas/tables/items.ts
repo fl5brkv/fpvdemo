@@ -10,7 +10,6 @@ export const items = sqliteTable('items', {
   userId: integer('user_id')
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
-  publicItemId: text('public_item_id').unique().notNull(),
   itemName: text('item_name').notNull(),
   category: text('category', {
     enum: [
@@ -64,17 +63,19 @@ export const selectItemSchema = createSelectSchema(items).omit({
   createdAt: true,
 });
 
-export const insertItemSchema = createInsertSchema(items).omit({
+export const insertItemSchema = createInsertSchema(items, {
+  itemName: (schema) => schema.itemName.min(1),
+}).omit({
   itemId: true,
   userId: true,
-  publicItemId: true,
   updatedAt: true,
   createdAt: true,
 });
 
-export const updateItemSchema = createSelectSchema(items).omit({
+export const updateItemSchema = createSelectSchema(items, {
+  itemName: (schema) => schema.itemName.min(1),
+}).omit({
   userId: true,
-  publicItemId: true,
   updatedAt: true,
   createdAt: true,
 });

@@ -36,12 +36,12 @@ export const emailChangeSchema = createSelectSchema(users).pick({
   email: true,
 });
 
-export const emailVerificationSchema = createSelectSchema(users).pick({
-  email: true,
+export const emailVerificationSchema = z.object({
+  verificationLink: z.string(),
 });
 
-export const emailVerificationRandomTokenSchema = z.object({
-  randomToken: z.string(),
+export const emailVerificationResendSchema = createSelectSchema(users).pick({
+  email: true,
 });
 
 export const passwordChangeSchema = createSelectSchema(users)
@@ -52,14 +52,14 @@ export const passwordChangeSchema = createSelectSchema(users)
     newPassword: z.string(),
   });
 
-export const passwordRecoverySchema = createSelectSchema(users).pick({
+export const passwordRecoveryRequestSchema = createSelectSchema(users).pick({
   email: true,
 });
 
-export const passwordRecoveryRandomTokenSchema = createSelectSchema(users)
+export const passwordRecoverySchema = createSelectSchema(users)
   .pick({
     password: true,
   })
   .extend({
-    randomToken: z.string(),
+    recoveryLink: z.string(),
   });

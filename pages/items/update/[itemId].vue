@@ -26,11 +26,11 @@
       >
       <select
         id="category"
-        v-model="category"
+        v-model="categoryField"
         v-bind="categoryAttrs"
         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
         <option value="" disabled selected>Select a category</option>
-        <option v-for="cat in categories" :key="cat" :value="cat">
+        <option v-for="cat in category" :key="cat" :value="cat">
           {{ cat }}
         </option>
       </select>
@@ -46,11 +46,11 @@
       >
       <select
         id="status"
-        v-model="status"
+        v-model="statusField"
         v-bind="statusAttrs"
         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
         <option value="" disabled selected>Select a status</option>
-        <option v-for="stat in statuses" :key="stat" :value="stat">
+        <option v-for="stat in status" :key="stat" :value="stat">
           {{ stat }}
         </option>
       </select>
@@ -164,10 +164,19 @@ definePageMeta({middleware: 'auth'});
 
 import {useForm} from 'vee-validate';
 import {toTypedSchema} from '@vee-validate/zod';
-import {insertItemSchema} from '~/server/database/schemas/tables/items';
-const {res, insertItem, error} = await useItem();
+import {updateItemSchema} from '~/server/database/schemas/tables/items';
 
-const categories = [
+const {res, items, updateItem, error} = await useItem();
+
+const route = useRoute();
+
+const selectedItem = computed(() => {
+  return items.value?.find(
+    (item) => item.itemId === Number(route.params.itemId)
+  );
+});
+
+const category = [
   'goggles',
   'radio (TX)',
   'goggles', // contains video receiver (VRX)
@@ -195,7 +204,7 @@ const categories = [
   'other',
 ] as const;
 
-const statuses = [
+const status = [
   'new',
   'active',
   'inactive',
@@ -205,12 +214,23 @@ const statuses = [
 ] as const;
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
-  validationSchema: toTypedSchema(insertItemSchema)
+  initialValues: {
+    itemId: selectedItem.value?.itemId,
+    itemName: selectedItem.value?.itemName,
+    category: selectedItem.value?.category,
+    status: selectedItem.value?.status,
+    purchasePrice: selectedItem.value?.purchasePrice,
+    purchaseDate: selectedItem.value?.purchaseDate,
+    salePrice: selectedItem.value?.salePrice,
+    saleDate: selectedItem.value?.saleDate,
+    additionalInfo: selectedItem.value?.additionalInfo,
+  },
+  validationSchema: toTypedSchema(updateItemSchema),
 });
 
 const [itemName, itemNameAttrs] = defineField('itemName');
-const [category, categoryAttrs] = defineField('category');
-const [status, statusAttrs] = defineField('status');
+const [categoryField, categoryAttrs] = defineField('category');
+const [statusField, statusAttrs] = defineField('status');
 const [purchasePrice, purchasePriceAttrs] = defineField('purchasePrice');
 const [purchaseDate, purchaseDateAttrs] = defineField('purchaseDate');
 const [salePrice, salePriceAttrs] = defineField('salePrice');
@@ -218,6 +238,6 @@ const [saleDate, saleDateAttrs] = defineField('saleDate');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  await insertItem(values);
+  updateItem(values);
 });
 </script>

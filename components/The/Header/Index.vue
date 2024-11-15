@@ -1,9 +1,9 @@
 <template>
   <header :class="childClass">
-    <nav class="flex justify-between">
+    <nav class="flex justify-between items-center py-4 px-5">
       <!-- Logo Section -->
       <div>
-        <NuxtLink to="/"> 🚀 MyApp </NuxtLink>
+        <NuxtLink to="/flights"> 🚀 MyApp Aplikacia</NuxtLink>
       </div>
 
       <!-- Navigation Links -->
@@ -38,13 +38,12 @@
         </div>
       </button>
 
-
-        <TheHeaderMenu childClass="hidden lg:flex" />
-
+      <TheHeaderUl childClass="hidden lg:flex gap-5" />
     </nav>
-    
-      <TheHeaderMenu v-if="open" childClass="flex flex-col lg:hidden" />
 
+    <TheHeaderUl
+      v-if="open"
+      childClass="flex flex-col lg:hidden gap-3 items-center border-t-4 border-[#333333] p-2.5" />
   </header>
 </template>
 

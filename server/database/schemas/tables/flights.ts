@@ -10,7 +10,7 @@ export const flights = sqliteTable('flights', {
   userId: integer('user_id')
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
-  publicFlightId: text('public_flight_id').unique().notNull(),
+  flightName: text('flight_name').notNull(),
   datetimeStart: text('datetime_start'),
   datetimeEnd: text('datetime_end'),
   location: text('location'),
@@ -48,16 +48,18 @@ export const selectFlightSchema = createSelectSchema(flights).omit({
   createdAt: true,
 });
 
-export const insertFlightSchema = createInsertSchema(flights).omit({
+export const insertFlightSchema = createInsertSchema(flights, {
+  flightName: (schema) => schema.flightName.min(1),
+}).omit({
   flightId: true,
   userId: true,
-  publicFlightId: true,
   updatedAt: true,
   createdAt: true,
 });
 
-export const updateFlightSchema = createSelectSchema(flights).omit({
-  publicFlightId: true,
+export const updateFlightSchema = createSelectSchema(flights, {
+  flightName: (schema) => schema.flightName.min(1),
+}).omit({
   userId: true,
   updatedAt: true,
   createdAt: true,

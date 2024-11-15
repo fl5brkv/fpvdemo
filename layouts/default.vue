@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col min-h-screen">
-    <TheHeader childClass="border-b-4 p-3 border-gray-300" />
-    <TheMain childClass="flex-grow mx-12 my-8"><slot /></TheMain>
-    <TheFooter childClass="p-3 border-t-4" />
+    <TheHeader childClass="border-b-4 border-[#333333]" />
+    <TheMain childClass="flex-grow p-11"><slot /></TheMain>
+    <TheFooter childClass="border-t-4 py-1.5 border-[#333333] text-center" />
   </div>
 </template>

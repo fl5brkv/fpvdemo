@@ -1,5 +1,6 @@
 <template>
   <AccountEmailChange />
+  <div class="mb-10"></div>
   <AccountPasswordChange />
 </template>
 

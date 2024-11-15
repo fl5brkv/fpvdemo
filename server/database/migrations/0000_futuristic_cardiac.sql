@@ -1,7 +1,7 @@
 CREATE TABLE `flights` (
 	`flight_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`user_id` integer NOT NULL,
-	`public_flight_id` text NOT NULL,
+	`flight_name` text NOT NULL,
 	`datetime_start` text,
 	`datetime_end` text,
 	`location` text,
@@ -17,7 +17,6 @@ CREATE TABLE `flights` (
 CREATE TABLE `items` (
 	`item_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`user_id` integer NOT NULL,
-	`public_item_id` text NOT NULL,
 	`item_name` text NOT NULL,
 	`category` text NOT NULL,
 	`status` text,
@@ -31,14 +30,6 @@ CREATE TABLE `items` (
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE TABLE `recovery_tokens` (
-	`recovery_token_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`user_id` integer NOT NULL,
-	`hashed_token` text NOT NULL,
-	`expires_at` integer NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
 CREATE TABLE `users` (
 	`user_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`email` text NOT NULL,
@@ -48,16 +39,4 @@ CREATE TABLE `users` (
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `verification_tokens` (
-	`verification_token_id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`user_id` integer NOT NULL,
-	`hashed_token` text NOT NULL,
-	`expires_at` integer NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON UPDATE no action ON DELETE cascade
-);
---> statement-breakpoint
-CREATE UNIQUE INDEX `flights_public_flight_id_unique` ON `flights` (`public_flight_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `items_public_item_id_unique` ON `items` (`public_item_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `recovery_tokens_hashed_token_unique` ON `recovery_tokens` (`hashed_token`);--> statement-breakpoint
-CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
-CREATE UNIQUE INDEX `verification_tokens_hashed_token_unique` ON `verification_tokens` (`hashed_token`);
+CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);

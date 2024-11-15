@@ -1,7 +1,5 @@
-import {render} from '@vue-email/render';
-import PasswordRecovery from '@/components/Email/PasswordRecovery.vue';
 import {passwordRecoverySchema} from '~/server/database/schemas/tables/users';
-import {nanoid} from 'nanoid';
+import {sha256} from 'ohash';
 
 const validationSchema = passwordRecoverySchema;
 
@@ -13,37 +11,46 @@ export default eventHandler(async (event) => {
   if (!result.success)
     throw createError({statusMessage: 'The provided data is invalid'});
 
-  const {email} = result.data;
+  const {password, recoveryLink} = result.data;
+
+  const decodedString = atob(decodeURIComponent(recoveryLink));
+
+  const [email, receivedCode, expiresAt] = decodedString.split(':');
+
+  if (Date.now() > Number(expiresAt))
+    throw createError({
+      statusMessage: 'Invalid or expired verification token.',
+    });
 
   const selected = await useDrizzle()
-    .select()
+    .select({
+      userId: tables.users.userId,
+      email: tables.users.email,
+    })
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
   if (!selected) throw createError({statusMessage: 'User not found'});
 
-  const randomToken = nanoid();
+  const fields = [selected.userId, selected.email];
 
-  const hashedToken = await hashPassword(randomToken);
+  const config = useRuntimeConfig(event);
 
-  const expiresAt = Date.now() + 15 * 60 * 1000; // 15 minutes
+  if (
+    receivedCode !==
+    sha256(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
+  )
+    throw createError({
+      statusMessage: 'Invalid recovery code',
+    });
 
-  await useDrizzle().insert(tables.recoveryTokens).values({
-    userId: selected.userId,
-    hashedToken,
-    expiresAt,
-  });
+  const hashedPassword = await hashPassword(password);
 
-  const {sendMail} = useNodeMailer();
+  await useDrizzle()
+    .update(tables.users)
+    .set({password: hashedPassword})
+    .where(eq(tables.users.email, email));
 
-  const html = await render(PasswordRecovery, {
-    recoveryLink: `localhost:3000/password-recovery/${encodeURIComponent(
-      randomToken
-    )}`,
-  });
-
-  await sendMail({subject: 'neviem', to: email, html});
-
-  return 'Please check your email to recover your password!';
+  return 'Password recovery succesfull';
 });

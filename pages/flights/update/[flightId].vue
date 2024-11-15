@@ -161,9 +161,19 @@
 definePageMeta({middleware: 'auth'});
 
 import {useForm} from 'vee-validate';
+
 import {toTypedSchema} from '@vee-validate/zod';
-import {insertFlightSchema} from '~/server/database/schemas/tables/flights';
-const {res, insertFlight, error} = await useFlight();
+import {updateFlightSchema} from '~/server/database/schemas/tables/flights';
+
+const {res, flights, updateFlight, error} = await useFlight();
+
+const route = useRoute();
+
+const selectedFlight = computed(() => {
+  return flights.value?.find(
+    (flight) => flight.flightId === Number(route.params.flightId)
+  );
+});
 
 const purposes = [
   'recreational',
@@ -182,9 +192,17 @@ const purposes = [
 
 const {handleSubmit, errors, defineField, isSubmitting, submitCount} = useForm({
   initialValues: {
-    flightName: generateFlightName(),
+    flightId: selectedFlight.value?.flightId,
+    flightName: selectedFlight.value?.flightName,
+    datetimeStart: selectedFlight.value?.datetimeStart,
+    datetimeEnd: selectedFlight.value?.datetimeEnd,
+    location: selectedFlight.value?.location,
+    numberOfFlights: selectedFlight.value?.numberOfFlights,
+    timeInAir: selectedFlight.value?.timeInAir,
+    purpose: selectedFlight.value?.purpose,
+    additionalInfo: selectedFlight.value?.additionalInfo,
   },
-  validationSchema: toTypedSchema(insertFlightSchema),
+  validationSchema: toTypedSchema(updateFlightSchema),
 });
 
 const [flightName, flightNameAttrs] = defineField('flightName');
@@ -197,6 +215,6 @@ const [purpose, purposeAttrs] = defineField('purpose');
 const [additionalInfo, additionalInfoAttrs] = defineField('additionalInfo');
 
 const onSubmit = handleSubmit(async (values) => {
-  await insertFlight(values);
+  await updateFlight(values);
 });
 </script>

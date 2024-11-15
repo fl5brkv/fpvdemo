@@ -15,9 +15,7 @@ export default defineNuxtConfig({
     siteKey: '<your-site-key>',
   },
   runtimeConfig: {
-    turnstile: {
-      secretKey: '',
-    },
+   passwordSalt: 'password-salt'
   },
   nodemailer: {
     // from: '',

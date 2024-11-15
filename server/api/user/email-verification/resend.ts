@@ -1,9 +1,9 @@
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
-import {emailChangeSchema} from '~/server/database/schemas/tables/users';
+import {emailVerificationResendSchema} from '~/server/database/schemas/tables/users';
 import {sha256} from 'ohash';
 
-const validationSchema = emailChangeSchema;
+const validationSchema = emailVerificationResendSchema;
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
@@ -15,21 +15,22 @@ export default eventHandler(async (event) => {
 
   const {email} = result.data;
 
-  const {user} = await requireUserSession(event);
-
-  const updated = await useDrizzle()
-    .update(tables.users)
-    .set({
-      email,
-      verifiedEmail: false,
+  const selected = await useDrizzle()
+    .select({
+      userId: tables.users.userId,
+      email: tables.users.email,
+      verifiedEmail: tables.users.verifiedEmail,
     })
-    .where(eq(tables.users.email, user.email))
-    .returning({userId: tables.users.userId, email: tables.users.email})
+    .from(tables.users)
+    .where(eq(tables.users.email, email))
     .get();
 
-  if (!updated) throw createError({statusMessage: 'There was an error'});
+  if (!selected) throw createError({statusMessage: 'User not found'});
 
-  const fields = [updated.userId, updated.email];
+  if (selected.verifiedEmail)
+    throw createError({statusMessage: 'Email already verified'});
+
+  const fields = [selected.userId, selected.email];
 
   const expiresAt = Date.now() + 60 * 60 * 1000;
 
@@ -43,13 +44,11 @@ export default eventHandler(async (event) => {
 
   const html = await render(EmailVerification, {
     verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
-      btoa(`${updated.email}:${verificationCode}:${expiresAt}`)
+      btoa(`${selected.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });
 
   await sendMail({subject: 'neviem', to: email, html});
 
-  await clearUserSession(event);
-
-  return 'Your email has been succesfully updated! Please verify your new email address.';
+  return 'Please check your email to verify your account!';
 });

@@ -6,7 +6,7 @@ export default eventHandler(async (event) => {
   const selected = await useDrizzle()
     .select({
       flightId: tables.flights.flightId,
-      publicFlightId: tables.flights.publicFlightId,
+      flightName: tables.flights.flightName,
       datetimeStart: tables.flights.datetimeStart,
       datetimeEnd: tables.flights.datetimeEnd,
       location: tables.flights.location,
@@ -17,11 +17,6 @@ export default eventHandler(async (event) => {
     })
     .from(tables.flights)
     .where(eq(tables.flights.userId, userId));
-
-  if (!selected)
-    throw createError({
-      statusMessage: 'No flights were retrieved.',
-    });
 
   return selected;
 });

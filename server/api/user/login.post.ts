@@ -1,4 +1,3 @@
-import {sha256} from 'ohash';
 import {loginSchema} from '~/server/database/schemas/tables/users';
 
 const validationSchema = loginSchema;

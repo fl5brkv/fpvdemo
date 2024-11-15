@@ -1,7 +1,6 @@
 import {render} from '@vue-email/render';
 import EmailVerification from '@/components/Email/EmailVerification.vue';
 import {signupSchema} from '~/server/database/schemas/tables/users';
-import {nanoid} from 'nanoid';
 import {sha256} from 'ohash';
 
 const validationSchema = signupSchema;
@@ -16,7 +15,7 @@ export default eventHandler(async (event) => {
 
   const {email, password} = result.data;
 
-  const hashedPassword = await hashPassword(password)
+  const hashedPassword = await hashPassword(password);
 
   const inserted = await useDrizzle()
     .insert(tables.users)
@@ -25,7 +24,7 @@ export default eventHandler(async (event) => {
       password: hashedPassword,
     })
     .onConflictDoNothing()
-    .returning({id: tables.users.userId})
+    .returning({userId: tables.users.userId, email: tables.users.email})
     .get();
 
   if (!inserted)
@@ -33,23 +32,21 @@ export default eventHandler(async (event) => {
       statusMessage: 'The email is invalid or already taken',
     });
 
-  const randomToken = nanoid();
+  const fields = [inserted.userId, inserted.email];
 
-  const hashedToken = sha256(randomToken);
+  const expiresAt = Date.now() + 60 * 60 * 1000;
 
-  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+  const config = useRuntimeConfig(event);
 
-  await useDrizzle().insert(tables.verificationTokens).values({
-    userId: inserted.id,
-    hashedToken,
-    expiresAt,
-  });
+  const verificationCode = sha256(
+    `${fields.join('')}${config.passwordSalt}${expiresAt}`
+  );
 
   const {sendMail} = useNodeMailer();
 
   const html = await render(EmailVerification, {
-    verifyLink: `localhost:3000/email-verification/${encodeURIComponent(
-      randomToken
+    verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
+      btoa(`${inserted.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });
 

@@ -1,7 +1,5 @@
-import {render} from '@vue-email/render';
-import EmailVerification from '@/components/Email/EmailVerification.vue';
+import {sha256} from 'ohash';
 import {emailVerificationSchema} from '~/server/database/schemas/tables/users';
-import {nanoid} from 'nanoid';
 
 const validationSchema = emailVerificationSchema;
 
@@ -10,44 +8,50 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+  if (!result.success) throw createError({statusMessage: 'Token is missing'});
 
-  const {email} = result.data;
+  const {verificationLink} = result.data;
+
+  const decodedString = atob(decodeURIComponent(verificationLink));
+
+  const [email, receivedCode, expiresAt] = decodedString.split(':');
+
+  if (Date.now() > Number(expiresAt))
+    throw createError({
+      statusMessage: 'Invalid or expired verification token.',
+    });
 
   const selected = await useDrizzle()
-    .select()
+    .select({
+      userId: tables.users.userId,
+      email: tables.users.email,
+      verifiedEmail: tables.users.verifiedEmail,
+    })
     .from(tables.users)
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selected)
-    throw createError({statusMessage: 'No user found with the provided email'});
+  if (!selected) throw createError({statusMessage: 'User not found'});
 
   if (selected.verifiedEmail)
     throw createError({statusMessage: 'Email already verified'});
 
-  const randomToken = nanoid();
+  const fields = [selected.userId, selected.email];
 
-  const hashedToken = await hashPassword(randomToken);
+  const config = useRuntimeConfig(event);
 
-  const expiresAt = Date.now() + 60 * 60 * 1000; // 1 hour
+  if (
+    receivedCode !==
+    sha256(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
+  )
+    throw createError({
+      statusMessage: 'Invalid verification code',
+    });
 
-  await useDrizzle().insert(tables.verificationTokens).values({
-    userId: selected.userId,
-    hashedToken,
-    expiresAt,
-  });
+  await useDrizzle()
+    .update(tables.users)
+    .set({verifiedEmail: true})
+    .where(eq(tables.users.email, email));
 
-  const {sendMail} = useNodeMailer();
-
-  const html = await render(EmailVerification, {
-    verifyLink: `localhost:3000/email-verification/${encodeURIComponent(
-      randomToken
-    )}`,
-  });
-
-  await sendMail({subject: 'neviem', to: email, html});
-
-  return 'Please check your email to verify your account!';
+  return 'Email verified';
 });

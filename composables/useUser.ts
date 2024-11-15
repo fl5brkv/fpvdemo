@@ -1,11 +1,11 @@
 import type {z} from 'zod';
 import type {
   emailChangeSchema,
-  emailVerificationRandomTokenSchema,
+  emailVerificationResendSchema,
   emailVerificationSchema,
   loginSchema,
   passwordChangeSchema,
-  passwordRecoveryRandomTokenSchema,
+  passwordRecoveryRequestSchema,
   passwordRecoverySchema,
   signupSchema,
 } from '~/server/database/schemas/tables/users';
@@ -34,7 +34,22 @@ export const useUser = async () => {
         method: 'POST',
         body: values,
       });
-      navigateTo('/account', {replace: true, external: true});
+      navigateTo('/flights', {replace: true, external: true});
+    } catch (err: any) {
+      error.value = err
+        ? err.statusMessage
+        : 'Oops! Something went wrong. Please try again later.';
+    }
+  };
+
+  const passwordRecoveryRequest = async (
+    values: z.infer<typeof passwordRecoveryRequestSchema>
+  ) => {
+    try {
+      res.value = await $fetch('/api/user/password-recovery/request', {
+        method: 'POST',
+        body: values,
+      });
     } catch (err: any) {
       error.value = err
         ? err.statusMessage
@@ -46,22 +61,7 @@ export const useUser = async () => {
     values: z.infer<typeof passwordRecoverySchema>
   ) => {
     try {
-      res.value = await $fetch('/api/user/password-recovery', {
-        method: 'POST',
-        body: values,
-      });
-    } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
-    }
-  };
-
-  const passwordRecoveryRandomToken = async (
-    values: z.infer<typeof passwordRecoveryRandomTokenSchema>
-  ) => {
-    try {
-      await $fetch('/api/user/password-recovery/random-token', {
+      await $fetch('/api/user/password-recovery', {
         method: 'POST',
         body: values,
       });
@@ -73,11 +73,11 @@ export const useUser = async () => {
     }
   };
 
-  const emailVerification = async (
-    values: z.infer<typeof emailVerificationSchema>
+  const emailVerificationResend = async (
+    values: z.infer<typeof emailVerificationResendSchema>
   ) => {
     try {
-      res.value = await $fetch('/api/user/email-verification', {
+      res.value = await $fetch('/api/user/email-verification/resend', {
         method: 'POST',
         body: values,
       });
@@ -88,11 +88,11 @@ export const useUser = async () => {
     }
   };
 
-  const emailVerificationRandomToken = async (
-    values: z.infer<typeof emailVerificationRandomTokenSchema>
+  const emailVerification = async (
+    values: z.infer<typeof emailVerificationSchema>
   ) => {
     try {
-      await $fetch('/api/user/email-verification/random-token', {
+      await $fetch('/api/user/email-verification', {
         method: 'POST',
         body: values,
       });
@@ -139,9 +139,9 @@ export const useUser = async () => {
     signup,
     login,
     passwordRecovery,
-    passwordRecoveryRandomToken,
+    passwordRecoveryRequest,
     emailVerification,
-    emailVerificationRandomToken,
+    emailVerificationResend,
     emailChange,
     passwordChange,
   };
