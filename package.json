@@ -12,18 +12,18 @@
   },
   "dependencies": {
     "@nuxthub/core": "^0.7.37",
-    "@nuxtjs/turnstile": "^0.9.10",
-    "@vee-validate/zod": "^4.14.6",
-    "@vitejs/plugin-vue": "^5.1.4",
+    "@nuxtjs/turnstile": "^0.9.11",
+    "@vee-validate/zod": "^4.14.7",
+    "@vitejs/plugin-vue": "^5.2.0",
     "@vue-email/components": "^0.0.19",
     "@vue-email/render": "^0.0.9",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.8",
-    "nuxt": "^3.13.2",
-    "nuxt-auth-utils": "^0.5.1",
+    "nuxt": "^3.14.159",
+    "nuxt-auth-utils": "^0.5.5",
     "ohash": "^1.1.4",
-    "vee-validate": "^4.14.6",
+    "vee-validate": "^4.14.7",
     "vue": "latest",
     "zod": "^3.23.8"
   },
@@ -32,8 +32,9 @@
     "drizzle-kit": "^0.24.2",
     "nodemailer": "^6.9.16",
     "nuxt-nodemailer": "^1.1.2",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.14",
-    "wrangler": "^3.84.0"
-  }
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "wrangler": "^3.87.0"
+  },
+  "packageManager": "pnpm@9.13.2"
 }
