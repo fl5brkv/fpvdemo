@@ -1,10 +1,8 @@
-import {deleteItemSchema} from '~/server/database/schemas/tables/items';
-
-const validationSchema = deleteItemSchema;
+import {itemDeleteSchema} from '~~/server/database/schema/tables/items';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    itemDeleteSchema.safeParse(body)
   );
 
   if (!result.success)

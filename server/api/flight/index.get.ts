@@ -7,12 +7,10 @@ export default eventHandler(async (event) => {
     .select({
       flightId: tables.flights.flightId,
       flightName: tables.flights.flightName,
-      datetimeStart: tables.flights.datetimeStart,
-      datetimeEnd: tables.flights.datetimeEnd,
+      date: tables.flights.date,
       location: tables.flights.location,
-      numberOfFlights: tables.flights.numberOfFlights,
+      landings: tables.flights.landings,
       timeInAir: tables.flights.timeInAir,
-      purpose: tables.flights.purpose,
       additionalInfo: tables.flights.additionalInfo,
     })
     .from(tables.flights)

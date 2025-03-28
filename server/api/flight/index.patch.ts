@@ -1,10 +1,8 @@
-import {updateFlightSchema} from '~/server/database/schemas/tables/flights';
-
-const validationSchema = updateFlightSchema;
+import {flightUpdateSchema} from '~~/server/database/schema/tables/flights';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    flightUpdateSchema.safeParse(body)
   );
 
   if (!result.success)

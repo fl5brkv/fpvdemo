@@ -1,11 +1,8 @@
-import {customAlphabet} from 'nanoid/non-secure';
-import {insertFlightSchema} from '~/server/database/schemas/tables/flights';
-
-const validationSchema = insertFlightSchema;
+import {flightInsertSchema} from '~~/server/database/schema/tables/flights';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    flightInsertSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -15,16 +12,11 @@ export default eventHandler(async (event) => {
     user: {userId},
   } = await requireUserSession(event);
 
-  const alphabet = '346789abcdefghijkmnpqrtwxyz';
-
-  const nanoid = customAlphabet(alphabet, 21);
-
   const inserted = await useDrizzle()
     .insert(tables.flights)
     .values({
       ...result.data,
       userId,
-      publicFlightId: nanoid(),
     })
     .returning({flightId: tables.flights.flightId})
     .get();

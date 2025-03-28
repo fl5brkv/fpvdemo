@@ -1,10 +1,8 @@
-import {deleteFlightSchema} from '~/server/database/schemas/tables/flights';
-
-const validationSchema = deleteFlightSchema;
+import {flightDeleteSchema} from '~~/server/database/schema/tables/flights';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    flightDeleteSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -20,8 +18,7 @@ export default eventHandler(async (event) => {
 
   if (!deleted)
     throw createError({
-      statusMessage:
-        'No flight were deleted. Flight not found.',
+      statusMessage: 'No flight were deleted. Flight not found.',
     });
 
   return 'Your flight has been successfully deleted!';

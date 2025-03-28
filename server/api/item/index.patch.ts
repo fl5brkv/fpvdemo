@@ -1,10 +1,8 @@
-import {updateItemSchema} from '~/server/database/schemas/tables/items';
-
-const validationSchema = updateItemSchema;
+import {itemUpdateSchema} from '~~/server/database/schema/tables/items';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    itemUpdateSchema.safeParse(body)
   );
 
   if (!result.success)

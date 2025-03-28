@@ -1,7 +1,7 @@
 import {render} from '@vue-email/render';
-import PasswordRecovery from '@/components/Email/PasswordRecovery.vue';
-import {passwordRecoveryRequestSchema} from '~/server/database/schemas/tables/users';
-import {sha256} from 'ohash';
+import PasswordRecovery from '~~/app/components/Email/PasswordRecovery.vue';
+import {passwordRecoveryRequestSchema} from '~~/server/database/schema/tables/users';
+import {digest} from 'ohash';
 
 const validationSchema = passwordRecoveryRequestSchema;
 
@@ -29,7 +29,7 @@ export default eventHandler(async (event) => {
 
   const config = useRuntimeConfig(event);
 
-  const recoveryCode = sha256(
+  const recoveryCode = digest(
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
@@ -41,7 +41,7 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  await sendMail({subject: 'neviem', to: email, html});
+  await sendMail({subject: 'Password recovery request', to: email, html});
 
   return 'Please check your email to recover your password!';
 });

@@ -11,30 +11,27 @@
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
-    "@nuxthub/core": "^0.7.37",
-    "@nuxtjs/turnstile": "^0.9.11",
-    "@vee-validate/zod": "^4.14.7",
-    "@vitejs/plugin-vue": "^5.2.0",
-    "@vue-email/components": "^0.0.19",
+    "@nuxthub/core": "^0.8.21",
+    "@tailwindcss/vite": "^4.0.17",
+    "@vee-validate/zod": "^4.15.0",
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vue-email/components": "^0.0.21",
     "@vue-email/render": "^0.0.9",
-    "drizzle-orm": "^0.33.0",
-    "drizzle-zod": "^0.5.1",
-    "nanoid": "^5.0.8",
-    "nuxt": "^3.14.159",
-    "nuxt-auth-utils": "^0.5.5",
-    "ohash": "^1.1.4",
-    "vee-validate": "^4.14.7",
+    "drizzle-orm": "^0.41.0",
+    "drizzle-zod": "^0.7.1",
+    "nuxt": "^3.16.1",
+    "nuxt-auth-utils": "^0.5.17",
+    "ohash": "^2.0.11",
+    "tailwindcss": "^4.0.17",
+    "vee-validate": "^4.15.0",
     "vue": "latest",
-    "zod": "^3.23.8"
+    "zod": "^3.24.2"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.20",
-    "drizzle-kit": "^0.24.2",
-    "nodemailer": "^6.9.16",
+    "drizzle-kit": "^0.30.6",
+    "nodemailer": "^6.10.0",
     "nuxt-nodemailer": "^1.1.2",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.15",
-    "wrangler": "^3.87.0"
+    "wrangler": "^4.5.1"
   },
-  "packageManager": "pnpm@9.13.2"
+  "packageManager": "pnpm@10.6.5"
 }

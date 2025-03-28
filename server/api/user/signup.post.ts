@@ -1,7 +1,9 @@
 import {render} from '@vue-email/render';
-import EmailVerification from '@/components/Email/EmailVerification.vue';
-import {signupSchema} from '~/server/database/schemas/tables/users';
-import {sha256} from 'ohash';
+import EmailVerification from '~~/app/components/Email/EmailVerification.vue';
+import {signupSchema} from '~~/server/database/schema/tables/users';
+import {
+  digest
+} from 'ohash';
 
 const validationSchema = signupSchema;
 
@@ -38,7 +40,7 @@ export default eventHandler(async (event) => {
 
   const config = useRuntimeConfig(event);
 
-  const verificationCode = sha256(
+  const verificationCode = digest(
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
@@ -50,7 +52,7 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  await sendMail({subject: 'neviem', to: email, html});
+  await sendMail({subject: 'Email verification request', to: email, html});
 
   return 'Please check your email to verify your account!';
 });

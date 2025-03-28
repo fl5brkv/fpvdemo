@@ -1,20 +1,13 @@
 import vue from '@vitejs/plugin-vue';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
-  modules: [
-    '@nuxthub/core',
-    'nuxt-auth-utils',
-    '@nuxtjs/turnstile',
-    'nuxt-nodemailer',
-  ],
+  modules: ['@nuxthub/core', 'nuxt-auth-utils', 'nuxt-nodemailer'],
   hub: {
     database: true,
   },
-  turnstile: {
-    siteKey: '<your-site-key>',
-  },
   runtimeConfig: {
-   passwordSalt: 'password-salt'
+    passwordSalt: 'password-salt',
   },
   nodemailer: {
     // from: '',
@@ -22,8 +15,8 @@ export default defineNuxtConfig({
     port: 587,
     secure: false,
     auth: {
-      user: '7c9df7466adb81',
-      pass: 'b1f611da27f11d',
+      user: 'fc0c4cc30eb910',
+      pass: '6e9b961643a33c',
     },
   },
   nitro: {
@@ -35,18 +28,19 @@ export default defineNuxtConfig({
       plugins: [vue()],
     },
   },
+  css: ['~/assets/css/main.css'],
   vite: {
     optimizeDeps: {
       exclude: ['vee-validate'],
     },
-  },
-  css: ['~/assets/css/main.css'],
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
-    },
+    plugins: [tailwindcss()],
   },
   compatibilityDate: '2024-04-03',
-  devtools: {enabled: true},
+  devtools: {enabled: false},
+  future: {
+    compatibilityVersion: 4,
+  },
+  routeRules: {
+    '/': {redirect: '/flights'},
+  },
 });

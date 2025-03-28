@@ -1,7 +1,7 @@
 import {render} from '@vue-email/render';
-import EmailVerification from '@/components/Email/EmailVerification.vue';
-import {emailChangeSchema} from '~/server/database/schemas/tables/users';
-import {sha256} from 'ohash';
+import EmailVerification from '~~/app/components/Email/EmailVerification.vue';
+import {emailChangeSchema} from '~~/server/database/schema/tables/users';
+import {digest} from 'ohash';
 
 const validationSchema = emailChangeSchema;
 
@@ -16,6 +16,12 @@ export default eventHandler(async (event) => {
   const {email} = result.data;
 
   const {user} = await requireUserSession(event);
+
+  if (email === user.email)
+    throw createError({
+      statusMessage:
+        'The email provided is already associated with your account.',
+    });
 
   const updated = await useDrizzle()
     .update(tables.users)
@@ -35,7 +41,7 @@ export default eventHandler(async (event) => {
 
   const config = useRuntimeConfig(event);
 
-  const verificationCode = sha256(
+  const verificationCode = digest(
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
@@ -47,9 +53,7 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  await sendMail({subject: 'neviem', to: email, html});
-
-  await clearUserSession(event);
+  await sendMail({subject: 'Email change request', to: email, html});
 
   return 'Your email has been succesfully updated! Please verify your new email address.';
 });

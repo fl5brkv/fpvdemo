@@ -1,11 +1,8 @@
-import {customAlphabet} from 'nanoid';
-import {insertItemSchema} from '~/server/database/schemas/tables/items';
-
-const validationSchema = insertItemSchema;
+import {itemInsertSchema} from '~~/server/database/schema/tables/items';
 
 export default eventHandler(async (event) => {
   const result = await readValidatedBody(event, (body) =>
-    validationSchema.safeParse(body)
+    itemInsertSchema.safeParse(body)
   );
 
   if (!result.success)
@@ -15,13 +12,9 @@ export default eventHandler(async (event) => {
     user: {userId},
   } = await requireUserSession(event);
 
-  const alphabet = '346789abcdefghijkmnpqrtwxyz';
-
-  const nanoid = customAlphabet(alphabet, 21);
-
   const inserted = await useDrizzle()
     .insert(tables.items)
-    .values({...result.data, userId, publicItemId: nanoid()})
+    .values({...result.data, userId})
     .returning({id: tables.items.itemId})
     .get();
 

@@ -1,5 +1,5 @@
-import {sha256} from 'ohash';
-import {emailVerificationSchema} from '~/server/database/schemas/tables/users';
+import {digest} from 'ohash';
+import {emailVerificationSchema} from '~~/server/database/schema/tables/users';
 
 const validationSchema = emailVerificationSchema;
 
@@ -42,7 +42,7 @@ export default eventHandler(async (event) => {
 
   if (
     receivedCode !==
-    sha256(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
+    digest(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
   )
     throw createError({
       statusMessage: 'Invalid verification code',

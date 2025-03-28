@@ -1,4 +1,4 @@
-import {passwordChangeSchema} from '~/server/database/schemas/tables/users';
+import {passwordChangeSchema} from '~~/server/database/schema/tables/users';
 
 const validationSchema = passwordChangeSchema;
 
@@ -23,7 +23,7 @@ export default eventHandler(async (event) => {
     .get();
 
   if (!selected || !(await verifyPassword(selected.password, password))) {
-    throw createError({statusMessage: 'Incorrect email or password.'});
+    throw createError({statusMessage: 'Incorrect password.'});
   }
 
   const hashedNewPassword = await hashPassword(newPassword);

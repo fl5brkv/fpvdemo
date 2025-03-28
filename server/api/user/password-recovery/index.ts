@@ -1,5 +1,5 @@
-import {passwordRecoverySchema} from '~/server/database/schemas/tables/users';
-import {sha256} from 'ohash';
+import {passwordRecoverySchema} from '~~/server/database/schema/tables/users';
+import {digest} from 'ohash';
 
 const validationSchema = passwordRecoverySchema;
 
@@ -39,7 +39,7 @@ export default eventHandler(async (event) => {
 
   if (
     receivedCode !==
-    sha256(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
+    digest(`${fields.join('')}${config.passwordSalt}${expiresAt}`)
   )
     throw createError({
       statusMessage: 'Invalid recovery code',

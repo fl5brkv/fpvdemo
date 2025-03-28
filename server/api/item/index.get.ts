@@ -9,10 +9,6 @@ export default eventHandler(async (event) => {
       itemName: tables.items.itemName,
       category: tables.items.category,
       status: tables.items.status,
-      purchasePrice: tables.items.purchasePrice,
-      purchaseDate: tables.items.purchaseDate,
-      salePrice: tables.items.salePrice,
-      saleDate: tables.items.saleDate,
       additionalInfo: tables.items.additionalInfo,
     })
     .from(tables.items)

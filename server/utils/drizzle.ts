@@ -1,6 +1,6 @@
 import {drizzle} from 'drizzle-orm/d1';
 
-import {schema} from '@/server/database/schemas/index';
+import {schema} from '~~/server/database/schema/index';
 
 export const tables = schema;
 

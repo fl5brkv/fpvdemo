@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "297805f6-68aa-4e64-86de-72ee1aaff317",
+  "id": "ed623ae3-9a58-4f8a-a7d4-a8db2320d4dd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "flights": {
@@ -35,13 +35,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "datetime_end": {
-          "name": "datetime_end",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "location": {
           "name": "location",
           "type": "text",
@@ -59,13 +52,6 @@
         "time_in_air": {
           "name": "time_in_air",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "purpose": {
-          "name": "purpose",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -111,7 +97,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "items": {
       "name": "items",
@@ -146,34 +133,6 @@
         },
         "status": {
           "name": "status",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "purchase_price": {
-          "name": "purchase_price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "purchase_date": {
-          "name": "purchase_date",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "sale_price": {
-          "name": "sale_price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "sale_date": {
-          "name": "sale_date",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -220,7 +179,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "users": {
       "name": "users",
@@ -282,9 +242,11 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},
