@@ -10,7 +10,7 @@
           class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center">
           <!-- App Name -->
           <Heading as="h1" class="text-2xl font-bold text-gray-800 mb-6">
-            Welcome to MyApp
+            Welcome to fpv
           </Heading>
 
           <!-- Verification Text -->

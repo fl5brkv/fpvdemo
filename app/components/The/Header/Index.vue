@@ -3,7 +3,7 @@
     <nav class="flex justify-between items-center py-4 px-5">
       <!-- Logo Section -->
       <div>
-        <NuxtLink to="/flights"> 🚀 MyApp Aplikacia</NuxtLink>
+        <NuxtLink to="/flights"> 🚀 FPV - demo</NuxtLink>
       </div>
 
       <!-- Navigation Links -->
