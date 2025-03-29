@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ed623ae3-9a58-4f8a-a7d4-a8db2320d4dd",
+  "id": "36133290-3cc8-4154-a0d8-633dee330cb8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "flights": {
@@ -28,8 +28,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "datetime_start": {
-          "name": "datetime_start",
+        "date": {
+          "name": "date",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -42,8 +42,8 @@
           "notNull": false,
           "autoincrement": false
         },
-        "number_of_flights": {
-          "name": "number_of_flights",
+        "landings": {
+          "name": "landings",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,

@@ -12,9 +12,9 @@ export const flights = sqliteTable('flights', {
     .references(() => users.userId, {onDelete: 'cascade'})
     .notNull(),
   flightName: text('flight_name').notNull(),
-  date: text('datetime_start'),
+  date: text('date'),
   location: text('location'),
-  landings: integer('number_of_flights', {mode: 'number'}),
+  landings: integer('landings', {mode: 'number'}),
   timeInAir: integer('time_in_air', {mode: 'number'}),
   additionalInfo: text('additional_info'),
   updatedAt: integer('updated_at', {mode: 'number'})
