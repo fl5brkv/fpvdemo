@@ -2,10 +2,10 @@ import {sql} from 'drizzle-orm';
 import {integer, sqliteTable, text} from 'drizzle-orm/sqlite-core';
 import {users} from './users';
 import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
-import { z } from 'zod';
+import {z} from 'zod';
 
 export const flights = sqliteTable('flights', {
-  flightId: integer('flight_id', {mode: 'number'}).primaryKey({
+  flightId: integer('flight_id').primaryKey({
     autoIncrement: true,
   }),
   userId: integer('user_id')

@@ -4,7 +4,7 @@ import {createInsertSchema, createSelectSchema} from 'drizzle-zod';
 import * as z from 'zod';
 
 export const users = sqliteTable('users', {
-  userId: integer('user_id', {mode: 'number'}).primaryKey({
+  userId: integer('user_id').primaryKey({
     autoIncrement: true,
   }),
   email: text('email').unique().notNull(),
