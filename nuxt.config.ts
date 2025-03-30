@@ -2,22 +2,12 @@ import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineNuxtConfig({
-  modules: ['@nuxthub/core', 'nuxt-auth-utils', 'nuxt-nodemailer'],
+  modules: ['@nuxthub/core', 'nuxt-auth-utils'],
   hub: {
     database: true,
   },
   runtimeConfig: {
     passwordSalt: 'password-salt',
-  },
-  nodemailer: {
-    // from: '',
-    host: 'sandbox.smtp.mailtrap.io',
-    port: 587,
-    secure: false,
-    auth: {
-      user: 'fc0c4cc30eb910',
-      pass: '6e9b961643a33c',
-    },
   },
   nitro: {
     experimental: {
