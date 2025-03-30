@@ -1,9 +1,7 @@
 import {render} from '@vue-email/render';
 import EmailVerification from '~~/app/components/Email/EmailVerification.vue';
 import {signupSchema} from '~~/server/database/schema/tables/users';
-import {
-  digest
-} from 'ohash';
+import {digest} from 'ohash';
 
 const validationSchema = signupSchema;
 
@@ -52,7 +50,14 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  // await sendMail({subject: 'Email verification request', to: email, html});
+  const mailer = await mailerPromise;
+
+  await mailer.send({
+    from: {name: 'Bob', email: 'bob@acme.com'},
+    subject: 'Email verification request',
+    to: {name: 'Alice', email},
+    html,
+  });
 
   return 'Please check your email to verify your account!';
 });
