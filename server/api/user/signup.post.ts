@@ -44,7 +44,7 @@ export default eventHandler(async (event) => {
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
-  const {sendMail} = useNodeMailer();
+  // const {sendMail} = useNodeMailer();
 
   const html = await render(EmailVerification, {
     verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
@@ -52,7 +52,7 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  await sendMail({subject: 'Email verification request', to: email, html});
+  // await sendMail({subject: 'Email verification request', to: email, html});
 
   return 'Please check your email to verify your account!';
 });

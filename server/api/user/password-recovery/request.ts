@@ -33,7 +33,7 @@ export default eventHandler(async (event) => {
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
-  const {sendMail} = useNodeMailer();
+  // const {sendMail} = useNodeMailer();
 
   const html = await render(PasswordRecovery, {
     recoveryLink: `localhost:3000/password-recovery/${encodeURIComponent(
@@ -41,7 +41,7 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  await sendMail({subject: 'Password recovery request', to: email, html});
+  // await sendMail({subject: 'Password recovery request', to: email, html});
 
   return 'Please check your email to recover your password!';
 });
