@@ -25,6 +25,11 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/css/main.css'],
   vite: {
+    build: {
+      rollupOptions: {
+        external: ['worker-mailer'], // ✅ Prevents client-side bundling
+      },
+    },
     optimizeDeps: {
       exclude: ['vee-validate'],
     },

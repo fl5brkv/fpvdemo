@@ -1,8 +1,6 @@
-import {WorkerMailer} from 'worker-mailer';
-import {useRuntimeConfig} from '#imports';
-
 export const mailerPromise = (async () => {
   try {
+    const {WorkerMailer} = await import('worker-mailer'); // ✅ Correct
     const config = useRuntimeConfig();
 
     return await WorkerMailer.connect({
@@ -11,11 +9,11 @@ export const mailerPromise = (async () => {
         password: config.mailerPassword,
       },
       host: config.mailerHost || 'sandbox.smtp.mailtrap.io',
-      port: config.mailerPort || 587,
+      port: Number(config.mailerPort) || 587,
       secure: false,
     });
   } catch (error) {
-    console.error('Error connecting to the mailer:', error);
-    throw error; // Re-throw the error so it can be caught later if necessary
+    console.error('Connection failed:', error);
+    throw error;
   }
 })();
