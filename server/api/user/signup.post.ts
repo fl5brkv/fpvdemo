@@ -42,8 +42,6 @@ export default eventHandler(async (event) => {
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
-  // const {sendMail} = useNodeMailer();
-
   const html = await render(EmailVerification, {
     verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
       btoa(`${inserted.email}:${verificationCode}:${expiresAt}`)

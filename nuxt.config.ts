@@ -8,6 +8,11 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     passwordSalt: 'password-salt',
+    mailerHost: import.meta.env.NUXT_MAILER_HOST,
+    mailerPort: import.meta.env.NUXT_MAILER_PORT,
+    mailerUsername: import.meta.env.NUXT_MAILER_USERNAME,
+    mailerPassword: import.meta.env.NUXT_MAILER_PASSWORD,
+    mailerAuthType: import.meta.env.NUXT_MAILER_AUTHTYPE,
   },
   nitro: {
     experimental: {
