@@ -48,14 +48,19 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  const mailer = await mailerPromise;
+  try {
+    const mailer = await mailerPromise;
 
-  await mailer.send({
-    from: {name: 'Bob', email: 'bob@acme.com'},
-    subject: 'Email verification request',
-    to: {name: 'Alice', email},
-    html,
-  });
+    await mailer.send({
+      from: {name: 'Bob', email: 'bob@acme.com'},
+      subject: 'Email verification request',
+      to: {name: 'Alice', email},
+      html,
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    // Handle the error appropriately, e.g., send an error response or log it for monitoring
+  }
 
   return 'Please check your email to verify your account!';
 });
