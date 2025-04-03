@@ -20,14 +20,14 @@ Powered by Nuxt 3 and Vue 3, styled using Tailwind for a modern, responsive UI.
 
 Type-safe and reliable backend with advanced validation and ORM layers for robustness and maintainability.
 
-| Technology      | Description                                                                                                    |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Zod**         | Runtime validation library for solid data integrity and type safety.                                           |
-| **Drizzle ORM** | Lightweight and efficient SQL ORM for easy database interaction.                                               |
-| **Drizzle Zod** | Zod-powered schema validation for Drizzle ORM, ensuring strong types.                                          |
-| **SQLite**      | A compact, fast database solution with minimal overhead.                                                       |
-| **Nodemailer**  | Email service handling for communication and notifications.                                                    |
-| **Mailtrap**    | SMTP server used for sending confirmation emails. |
+| Technology        | Description                                                                |
+| ----------------- | -------------------------------------------------------------------------- |
+| **Zod**           | Runtime validation library for solid data integrity and type safety.       |
+| **Drizzle ORM**   | Lightweight and efficient SQL ORM for easy database interaction.           |
+| **Drizzle Zod**   | Zod-powered schema validation for Drizzle ORM, ensuring strong types.      |
+| **SQLite**        | A compact, fast database solution with minimal overhead.                   |
+| **Worker-Mailer** | Email-sending utility designed to work seamlessly with Cloudflare Workers. |
+| **Mailgun**       | SMTP server used for sending confirmation emails.                          |
 
 ---
 
