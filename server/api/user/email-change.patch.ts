@@ -12,7 +12,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {email} = result.data;
 
@@ -22,6 +25,9 @@ export default eventHandler(async (event) => {
     throw createError({
       statusMessage:
         'The email provided is already associated with your account.',
+      data: {
+        message: 'The email provided is already associated with your account.',
+      },
     });
 
   const updated = await useDrizzle()
@@ -34,7 +40,11 @@ export default eventHandler(async (event) => {
     .returning({userId: tables.users.userId, email: tables.users.email})
     .get();
 
-  if (!updated) throw createError({statusMessage: 'There was an error'});
+  if (!updated)
+    throw createError({
+      statusMessage: 'There was an error',
+      data: {message: 'There was an error'},
+    });
 
   const fields = [updated.userId, updated.email];
 
@@ -47,7 +57,9 @@ export default eventHandler(async (event) => {
   );
 
   const html = await render(EmailVerification, {
-    verificationLink: `${config.public.baseURL}/email-verification/${encodeURIComponent(
+    verificationLink: `${
+      config.public.baseURL
+    }/email-verification/${encodeURIComponent(
       btoa(`${updated.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });

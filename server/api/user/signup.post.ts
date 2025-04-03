@@ -12,7 +12,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {email, password} = result.data;
 
@@ -31,6 +34,7 @@ export default eventHandler(async (event) => {
   if (!inserted)
     throw createError({
       statusMessage: 'The email is invalid or already taken',
+      data: {message: 'The email is invalid or already taken'},
     });
 
   const fields = [inserted.userId, inserted.email];
@@ -44,7 +48,9 @@ export default eventHandler(async (event) => {
   );
 
   const html = await render(EmailVerification, {
-    verificationLink: `${config.public.baseURL}/email-verification/${encodeURIComponent(
+    verificationLink: `${
+      config.public.baseURL
+    }/email-verification/${encodeURIComponent(
       btoa(`${inserted.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });

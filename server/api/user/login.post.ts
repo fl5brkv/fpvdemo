@@ -8,7 +8,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {email, password} = result.data;
 
@@ -24,7 +27,10 @@ export default eventHandler(async (event) => {
     .get();
 
   if (!selected || !(await verifyPassword(selected.password, password)))
-    throw createError({statusMessage: 'Incorrect email or password.'});
+    throw createError({
+      statusMessage: 'Incorrect email or password.',
+      data: {message: 'Incorrect email or password.'},
+    });
 
   await replaceUserSession(event, {
     user: {

@@ -12,7 +12,6 @@ import type {
 
 export const useUser = async () => {
   const res = ref<string | null>(null);
-
   const error = ref<string | null>(null);
 
   const signup = async (values: z.infer<typeof signupSchema>) => {
@@ -22,9 +21,10 @@ export const useUser = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -36,9 +36,10 @@ export const useUser = async () => {
       });
       navigateTo('/flights', {replace: true, external: true});
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -51,9 +52,10 @@ export const useUser = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -67,9 +69,10 @@ export const useUser = async () => {
       });
       navigateTo('/login');
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -82,9 +85,10 @@ export const useUser = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -98,9 +102,10 @@ export const useUser = async () => {
       });
       navigateTo('/login');
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -112,9 +117,10 @@ export const useUser = async () => {
       });
       navigateTo('/login');
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -127,9 +133,10 @@ export const useUser = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 

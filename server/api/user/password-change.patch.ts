@@ -8,7 +8,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {password, newPassword} = result.data;
 
@@ -22,9 +25,11 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, user.email))
     .get();
 
-  if (!selected || !(await verifyPassword(selected.password, password))) {
-    throw createError({statusMessage: 'Incorrect password.'});
-  }
+  if (!selected || !(await verifyPassword(selected.password, password)))
+    throw createError({
+      statusMessage: 'Incorrect password.',
+      data: {message: 'Incorrect password.'},
+    });
 
   const hashedNewPassword = await hashPassword(newPassword);
 

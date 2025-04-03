@@ -6,7 +6,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   await requireUserSession(event);
 
@@ -20,8 +23,11 @@ export default eventHandler(async (event) => {
   if (!updated)
     throw createError({
       statusMessage:
-        'No flight sessions were updated. Flight session not found.',
+        'No flight was updated. Flight not found.',
+      data: {
+        message: 'No flight was updated. Flight not found.',
+      },
     });
 
-  return 'Your flight session has been successfully updated!';
+  return 'Your flight has been successfully updated!';
 });

@@ -8,7 +8,11 @@ export default eventHandler(async (event) => {
     validationSchema.safeParse(body)
   );
 
-  if (!result.success) throw createError({statusMessage: 'Token is missing'});
+  if (!result.success)
+    throw createError({
+      statusMessage: 'Token is missing',
+      data: {message: 'Token is missing'},
+    });
 
   const {verificationLink} = result.data;
 
@@ -31,10 +35,17 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selected) throw createError({statusMessage: 'User not found'});
+  if (!selected)
+    throw createError({
+      statusMessage: 'User not found',
+      data: {message: 'User not found'},
+    });
 
   if (selected.verifiedEmail)
-    throw createError({statusMessage: 'Email already verified'});
+    throw createError({
+      statusMessage: 'Email already verified',
+      data: {message: 'Email already verified'},
+    });
 
   const fields = [selected.userId, selected.email];
 
@@ -46,6 +57,7 @@ export default eventHandler(async (event) => {
   )
     throw createError({
       statusMessage: 'Invalid verification code',
+      data: {message: 'Invalid verification code'},
     });
 
   await useDrizzle()

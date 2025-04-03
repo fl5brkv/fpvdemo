@@ -29,9 +29,10 @@ export const useFlight = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -46,9 +47,10 @@ export const useFlight = async () => {
           flight.flightId === values.flightId ? {...flight, ...values} : flight
         ) || null;
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -63,9 +65,10 @@ export const useFlight = async () => {
           (flight) => flight.flightId !== values.flightId
         ) || null;
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 

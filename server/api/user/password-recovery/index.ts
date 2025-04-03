@@ -9,7 +9,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {password, recoveryLink} = result.data;
 
@@ -20,6 +23,7 @@ export default eventHandler(async (event) => {
   if (Date.now() > Number(expiresAt))
     throw createError({
       statusMessage: 'Invalid or expired verification token.',
+      data: {message: 'Invalid or expired verification token.'},
     });
 
   const selected = await useDrizzle()
@@ -31,7 +35,11 @@ export default eventHandler(async (event) => {
     .where(eq(tables.users.email, email))
     .get();
 
-  if (!selected) throw createError({statusMessage: 'User not found'});
+  if (!selected)
+    throw createError({
+      statusMessage: 'User not found',
+      data: {message: 'User not found'},
+    });
 
   const fields = [selected.userId, selected.email];
 
@@ -43,6 +51,7 @@ export default eventHandler(async (event) => {
   )
     throw createError({
       statusMessage: 'Invalid recovery code',
+      data: {message: 'Invalid recovery code'},
     });
 
   const hashedPassword = await hashPassword(password);

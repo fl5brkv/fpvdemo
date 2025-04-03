@@ -6,7 +6,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   await requireUserSession(event);
 
@@ -20,6 +23,7 @@ export default eventHandler(async (event) => {
   if (!updated)
     throw createError({
       statusMessage: 'No items were updated. Item not found.',
+      data: {message: 'No items were updated. Item not found.'},
     });
 
   return 'Your item has been successfully updated!';

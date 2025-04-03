@@ -6,7 +6,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {
     user: {userId},
@@ -24,6 +27,7 @@ export default eventHandler(async (event) => {
   if (!inserted)
     throw createError({
       statusMessage: 'Failed to create flight',
+      data: {message: 'Failed to create flight'},
     });
 
   return 'Your flight has been successfully added!';

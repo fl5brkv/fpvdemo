@@ -12,6 +12,7 @@ export default eventHandler(async (event) => {
   if (!deleted)
     throw createError({
       statusMessage: 'No account was deleted. Account not found.',
+      data: {message: 'No account was deleted. Account not found.'},
     });
 
   return sendRedirect(event, '/login');

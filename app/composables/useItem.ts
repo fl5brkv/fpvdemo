@@ -29,9 +29,10 @@ export const useItem = async () => {
         body: values,
       });
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -46,9 +47,10 @@ export const useItem = async () => {
           item.itemId === values.itemId ? {...item, ...values} : item
         ) || null;
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 
@@ -61,9 +63,10 @@ export const useItem = async () => {
       items.value =
         items.value?.filter((item) => item.itemId !== values.itemId) || null;
     } catch (err: any) {
-      error.value = err
-        ? err.statusMessage
-        : 'Oops! Something went wrong. Please try again later.';
+      error.value =
+        err.data?.message ||
+        err.statusMessage ||
+        'Oops! Something went wrong. Please try again later.';
     }
   };
 

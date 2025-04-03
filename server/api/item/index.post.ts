@@ -6,7 +6,10 @@ export default eventHandler(async (event) => {
   );
 
   if (!result.success)
-    throw createError({statusMessage: 'The provided data is invalid'});
+    throw createError({
+      statusMessage: 'The provided data is invalid',
+      data: {message: 'The provided data is invalid'},
+    });
 
   const {
     user: {userId},
@@ -21,6 +24,7 @@ export default eventHandler(async (event) => {
   if (!inserted)
     throw createError({
       statusMessage: 'The data is invalid.',
+      data: {message: 'The data is invalid.'},
     });
 
   return 'Your item has been successfully added!';
