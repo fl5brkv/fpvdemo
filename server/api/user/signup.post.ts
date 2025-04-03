@@ -2,6 +2,7 @@ import {render} from '@vue-email/render';
 import EmailVerification from '~~/app/components/Email/EmailVerification.vue';
 import {signupSchema} from '~~/server/database/schema/tables/users';
 import {digest} from 'ohash';
+import {WorkerMailer} from 'worker-mailer';
 
 const validationSchema = signupSchema;
 
@@ -48,19 +49,23 @@ export default eventHandler(async (event) => {
     )}`,
   });
 
-  try {
-    const mailer = await mailerPromise;
+  const mailer = await WorkerMailer.connect({
+    credentials: {
+      username: config.mailerUsername,
+      password: config.mailerPassword,
+    },
+    host: 'smtp.eu.mailgun.org',
+    port: 587,
+    secure: false,
+    authType: 'plain',
+  });
 
-    await mailer.send({
-      from: {name: 'Bob', email: 'bob@acme.com'},
-      subject: 'Email verification request',
-      to: {name: 'Alice', email},
-      html,
-    });
-  } catch (error) {
-    console.error('Error sending email:', error);
-    // Handle the error appropriately, e.g., send an error response or log it for monitoring
-  }
+  await mailer.send({
+    from: {name: 'Bob', email: 'bob@acme.com'},
+    subject: 'Email verification request',
+    to: {name: 'Alice', email},
+    html,
+  });
 
   return 'Please check your email to verify your account!';
 });
