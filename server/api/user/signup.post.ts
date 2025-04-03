@@ -61,9 +61,9 @@ export default eventHandler(async (event) => {
   });
 
   await mailer.send({
-    from: {name: 'Bob', email: 'bob@acme.com'},
+    from: {email: 'info@fpvdemo.fun'},
     subject: 'Email verification request',
-    to: {name: 'Alice', email},
+    to: {email},
     html,
   });
 

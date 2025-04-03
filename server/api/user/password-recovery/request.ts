@@ -2,6 +2,7 @@ import {render} from '@vue-email/render';
 import PasswordRecovery from '~~/app/components/Email/PasswordRecovery.vue';
 import {passwordRecoveryRequestSchema} from '~~/server/database/schema/tables/users';
 import {digest} from 'ohash';
+import {WorkerMailer} from 'worker-mailer';
 
 const validationSchema = passwordRecoveryRequestSchema;
 
@@ -33,15 +34,29 @@ export default eventHandler(async (event) => {
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
-  // const {sendMail} = useNodeMailer();
-
   const html = await render(PasswordRecovery, {
     recoveryLink: `localhost:3000/password-recovery/${encodeURIComponent(
       btoa(`${selected.email}:${recoveryCode}:${expiresAt}`)
     )}`,
   });
 
-  // await sendMail({subject: 'Password recovery request', to: email, html});
+  const mailer = await WorkerMailer.connect({
+    credentials: {
+      username: config.mailerUsername,
+      password: config.mailerPassword,
+    },
+    host: 'smtp.eu.mailgun.org',
+    port: 587,
+    secure: false,
+    authType: 'plain',
+  });
+
+  await mailer.send({
+    from: {email: 'info@fpvdemo.fun'},
+    subject: 'Password recovery request',
+    to: {email},
+    html,
+  });
 
   return 'Please check your email to recover your password!';
 });

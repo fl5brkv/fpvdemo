@@ -1,7 +1,8 @@
 import {render} from '@vue-email/render';
 import EmailVerification from '~~/app/components/Email/EmailVerification.vue';
-import {emailVerificationResendSchema} from  '~~/server/database/schema/tables/users';
+import {emailVerificationResendSchema} from '~~/server/database/schema/tables/users';
 import {digest} from 'ohash';
+import {WorkerMailer} from 'worker-mailer';
 
 const validationSchema = emailVerificationResendSchema;
 
@@ -40,15 +41,29 @@ export default eventHandler(async (event) => {
     `${fields.join('')}${config.passwordSalt}${expiresAt}`
   );
 
-  // const {sendMail} = useNodeMailer();
-
   const html = await render(EmailVerification, {
     verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
       btoa(`${selected.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });
 
-  // await sendMail({subject: 'Email verification', to: email, html});
+  const mailer = await WorkerMailer.connect({
+    credentials: {
+      username: config.mailerUsername,
+      password: config.mailerPassword,
+    },
+    host: 'smtp.eu.mailgun.org',
+    port: 587,
+    secure: false,
+    authType: 'plain',
+  });
+
+  await mailer.send({
+    from: {email: 'info@fpvdemo.fun'},
+    subject: 'Email verification request',
+    to: {email},
+    html,
+  });
 
   return 'Please check your email to verify your account!';
 });
