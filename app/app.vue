@@ -3,15 +3,15 @@
   <div class="flex flex-col min-h-screen">
     <TheHeader childClass="border-b-2 border-gray-200" />
     <main class="flex-grow p-11"><NuxtPage /></main>
-    <footer class="border-t-2 py-1.5 border-b border-gray-200 text-center">
-      <div class="inline-flex items-center space-x-1 text-lg">
+    <footer class="border-t-2 py-2 border-b border-gray-200 text-center">
+      <div class="inline-flex items-center space-x-1">
         <span>Built with ❤️ using</span>
         <NuxtLink
           to="https://nuxt.com/"
           external
           class="inline-flex items-center">
           <svg
-            class="ml-1 h-4.5 w-auto"
+            class="ml-1 h-4 w-auto"
             viewBox="0 0 800 200"
             fill="none"
             xmlns="http://www.w3.org/2000/svg">
