@@ -35,7 +35,7 @@ export default eventHandler(async (event) => {
   );
 
   const html = await render(PasswordRecovery, {
-    recoveryLink: `localhost:3000/password-recovery/${encodeURIComponent(
+    recoveryLink: `${config.public.baseURL}/password-recovery/${encodeURIComponent(
       btoa(`${selected.email}:${recoveryCode}:${expiresAt}`)
     )}`,
   });

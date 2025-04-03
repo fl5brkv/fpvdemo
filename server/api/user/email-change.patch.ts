@@ -47,7 +47,7 @@ export default eventHandler(async (event) => {
   );
 
   const html = await render(EmailVerification, {
-    verificationLink: `localhost:3000/email-verification/${encodeURIComponent(
+    verificationLink: `${config.public.baseURL}/email-verification/${encodeURIComponent(
       btoa(`${updated.email}:${verificationCode}:${expiresAt}`)
     )}`,
   });
