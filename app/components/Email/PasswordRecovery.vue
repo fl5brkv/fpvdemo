@@ -10,7 +10,7 @@
           class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center">
           <!-- App Name -->
           <Heading as="h1" class="text-2xl font-bold text-gray-800 mb-4">
-            Password Recovery for fpv
+            Password Recovery for FPV - demo
           </Heading>
 
           <!-- Recovery Text -->
@@ -38,7 +38,7 @@
 
           <!-- Footer Text -->
           <Text class="mt-8 text-gray-500 text-sm">
-            If you did not request this, please contact our support.
+            If you did not request this, please contact our support. (soon)
           </Text>
         </Section>
       </Body>

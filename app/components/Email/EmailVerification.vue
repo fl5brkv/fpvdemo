@@ -10,7 +10,7 @@
           class="max-w-xl mx-auto bg-white p-8 rounded-xl shadow-lg text-center">
           <!-- App Name -->
           <Heading as="h1" class="text-2xl font-bold text-gray-800 mb-6">
-            Welcome to fpv
+            Welcome to FPV - demo
           </Heading>
 
           <!-- Verification Text -->
@@ -41,7 +41,7 @@
 
           <!-- Footer Text -->
           <Text class="mt-8 text-gray-500 text-sm">
-            If you did not request this email, please ignore it.
+            If you did not request this email, please ignore it. (soon)
           </Text>
         </Section>
       </Body>
